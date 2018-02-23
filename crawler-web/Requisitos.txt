@@ -4,5 +4,8 @@ Python v3
 
 Scrapy web (https://scrapy.org/)
 
+Instructions:
+
+scrapy runspider recipes_spider.py -o recipes.json
 
 
