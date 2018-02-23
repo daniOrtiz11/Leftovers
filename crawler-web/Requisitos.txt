@@ -1,0 +1,8 @@
+Dependencies:
+
+Python v3
+
+Scrapy web (https://scrapy.org/)
+
+
+
