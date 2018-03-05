@@ -1,11 +1,20 @@
-Dependencies:
+Dependencies recipes_spyder:
 
 Python v3
 
 Scrapy web (https://scrapy.org/)
 
-Instructions:
+Instructions recipes_spyder:
 
 scrapy runspider recipes_spider.py -o recipes.json
 
+Dependencies recipes_beautiful:
 
+Python v3
+
+Beautiful Soup
+(https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
+
+Instructions recipes_beautiful:
+
+python recipes_beautiful
