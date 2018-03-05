@@ -9,6 +9,7 @@ class web_crawler(object):
         self.dificultad = ""
         self.ingredientes = ""
         self.personas = ""
+        self.instrucciones = ""
         self.readWeb(url)
         self.cleanParams()
         print("Receta:")
@@ -16,12 +17,14 @@ class web_crawler(object):
         print(self.dificultad)
         print(self.personas)
         print(self.ingredientes)
+        print(self.instrucciones)
 		
     def readWeb(self,url):
         req = requests.get(url)
         soup = BeautifulSoup(req.text, "lxml")
         self.titulo = soup.h1.string 
-        textos = soup.findAll("div", {"class": "blob js-post-images-container"})
+        self.instrucciones = soup.findAll("div", {"class": "blob js-post-images-container"})
+        self.instrucciones = self.instrucciones[1].get_text()
         self.dificultad = soup.findAll("div", {"class": "asset-recipe-difficulty"})
         mydivs = soup.findAll("div", {"class": "asset-recipe-meta"})
         self.ingredientes = mydivs[0].ul
@@ -56,6 +59,7 @@ class web_crawler(object):
                     indice = indice + 1
             else:
                 indice = indice + 1
-             
+        instaux = self.instrucciones.split('Con qué acompañar')
+        self.instrucciones = instaux[0]		
 		
 spyder = web_crawler('https://www.directoalpaladar.com/recetas-de-pescados-y-mariscos/salmon-al-horno-con-frutos-secos-la-receta-definitiva')
