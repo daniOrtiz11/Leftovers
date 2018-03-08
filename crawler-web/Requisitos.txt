@@ -1,13 +1,5 @@
 Dependencies recipes_spyder:
 
-Python v3
-
-Scrapy web (https://scrapy.org/)
-
-Instructions recipes_spyder:
-
-scrapy runspider recipes_spider.py -o recipes.json
-
 Dependencies recipes_beautiful:
 
 Python v3

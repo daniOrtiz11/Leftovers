@@ -10,6 +10,7 @@ class web_crawler(object):
         self.ingredientes = ""
         self.personas = ""
         self.instrucciones = ""
+        self.tiempo = ""
         self.readWeb(url)
         self.cleanParams()
         print("Receta:")
@@ -18,12 +19,15 @@ class web_crawler(object):
         print(self.personas)
         print(self.ingredientes)
         print(self.instrucciones)
+        print(self.tiempo)
 		
     def readWeb(self,url):
         req = requests.get(url)
         soup = BeautifulSoup(req.text, "lxml")
         self.titulo = soup.h1.string 
         self.instrucciones = soup.findAll("div", {"class": "blob js-post-images-container"})
+        self.tiempo = soup.findAll("li", {"class": "asset-recipe-list-item m-is-totaltime"})
+        self.tiempo = self.tiempo[0].get_text()
         self.instrucciones = self.instrucciones[1].get_text()
         self.dificultad = soup.findAll("div", {"class": "asset-recipe-difficulty"})
         mydivs = soup.findAll("div", {"class": "asset-recipe-meta"})
@@ -31,6 +35,8 @@ class web_crawler(object):
         self.personas = soup.findAll("div", {"class": "asset-recipe-yield"})
 
     def cleanParams(self):
+        times = self.tiempo.split('\n')
+        self.tiempo = times[2]
         if('Fácil' in self.dificultad[0].string):
             self.dificultad = "Fácil"
         elif("Media" in self.dificultad[0].string):
