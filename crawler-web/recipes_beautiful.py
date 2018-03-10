@@ -1,4 +1,6 @@
 ﻿import requests
+import pymysql
+
 from bs4 import BeautifulSoup
 # -*- coding: utf-8 -*-
 
@@ -13,13 +15,9 @@ class web_crawler(object):
         self.tiempo = ""
         self.readWeb(url)
         self.cleanParams()
-        print("Receta:")
-        print(self.titulo)
-        print(self.dificultad)
-        print(self.personas)
-        print(self.ingredientes)
-        print(self.instrucciones)
-        print(self.tiempo)
+        self.idR = 1
+        #print(self.ingredientes)
+        self.insertReceta()
 		
     def readWeb(self,url):
         req = requests.get(url)
@@ -66,6 +64,30 @@ class web_crawler(object):
             else:
                 indice = indice + 1
         instaux = self.instrucciones.split('Con qué acompañar')
-        self.instrucciones = instaux[0]		
+        self.instrucciones = instaux[0]
+
+    def insertReceta(self):
+        connection = pymysql.connect(host='localhost',
+                             user='root',
+                             password='',
+                             db='leftovers',
+                             charset='utf8mb4',
+                             cursorclass=pymysql.cursors.DictCursor)
+        try:
+            with connection.cursor() as cursor:
+                sql = "INSERT INTO `recetas` (`id`,`titulo`, `npersonas`, `tiempo`, `dificultad`, `instrucciones`) VALUES (%s, %s, %s, %s, %s, %s )"
+                cursor.execute(sql, (self.idR, self.titulo, self.personas, self.tiempo ,self.dificultad, self.instrucciones))
+            connection.commit()
+            
+            with connection.cursor() as cursor:
+                for k,v in self.ingredientes.items():
+                    sql = "INSERT INTO `ingredientes` (`nombre`, `idreceta`, `cantidad`) VALUES (%s, %s, %s)"
+                    cursor.execute(sql, (k, self.idR, v))
+            connection.commit()
+
+        finally:
+            connection.close()
+
+        self.idR = self.idR + 1			
 		
 spyder = web_crawler('https://www.directoalpaladar.com/recetas-de-pescados-y-mariscos/salmon-al-horno-con-frutos-secos-la-receta-definitiva')
