@@ -10,7 +10,9 @@ Beautiful Soup
 PyMySQL
 https://pypi.python.org/pypi/PyMySQL
 
-Instructions recipes_beautiful:
+Instructions:
 
-python recipes_beautiful
+python urls.py
+(check exists urls.txt)
+python recipes_beautiful.py
 
