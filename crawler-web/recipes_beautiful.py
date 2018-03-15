@@ -5,19 +5,22 @@ from bs4 import BeautifulSoup
 # -*- coding: utf-8 -*-
 
 class web_crawler(object):
-    def __init__(self,url):
-        self.titulo = ""
-        self.instrucciones = ""
-        self.dificultad = ""
-        self.ingredientes = ""
-        self.personas = ""
-        self.instrucciones = ""
-        self.tiempo = ""
-        self.readWeb(url)
-        self.cleanParams()
-        self.idR = 1
-        #print(self.ingredientes)
-        self.insertReceta()
+    def __init__(self):
+        with open("urls.txt") as fichero:
+            self.idR = 1
+            for linea in fichero:
+               self.titulo = ""
+               self.instrucciones = ""
+               self.dificultad = ""
+               self.ingredientes = ""
+               self.personas = ""
+               self.instrucciones = ""
+               self.tiempo = ""
+               self.valida = False
+               self.readWeb(linea)
+               if(self.valida == True):
+                   self.cleanParams()
+                   self.insertReceta()
 		
     def readWeb(self,url):
         req = requests.get(url)
@@ -25,13 +28,18 @@ class web_crawler(object):
         self.titulo = soup.h1.string 
         self.instrucciones = soup.findAll("div", {"class": "blob js-post-images-container"})
         self.tiempo = soup.findAll("li", {"class": "asset-recipe-list-item m-is-totaltime"})
-        self.tiempo = self.tiempo[0].get_text()
-        self.instrucciones = self.instrucciones[1].get_text()
-        self.dificultad = soup.findAll("div", {"class": "asset-recipe-difficulty"})
-        mydivs = soup.findAll("div", {"class": "asset-recipe-meta"})
-        self.ingredientes = mydivs[0].ul
-        self.personas = soup.findAll("div", {"class": "asset-recipe-yield"})
-
+        longt = len(self.tiempo)
+        if(longt > 0):
+            self.valida = True
+            self.tiempo = self.tiempo[0].get_text()
+            self.instrucciones = self.instrucciones[1].get_text()
+            self.dificultad = soup.findAll("div", {"class": "asset-recipe-difficulty"})
+            mydivs = soup.findAll("div", {"class": "asset-recipe-meta"})
+            self.ingredientes = mydivs[0].ul
+            self.personas = soup.findAll("div", {"class": "asset-recipe-yield"})
+        else:
+            self.valida = False
+		
     def cleanParams(self):
         times = self.tiempo.split('\n')
         self.tiempo = times[2]
@@ -57,8 +65,12 @@ class web_crawler(object):
                         self.ingredientes[aux] = ""
                         indice = indice + 1
                 elif(indice == 3):
-                        indice = 0
-                        self.ingredientes[keyant] = aux	
+                        if(aux != ''):
+                            indice = 0
+                            self.ingredientes[keyant] = aux	
+                        else:
+                            indice = 1
+                            self.ingredientes[keyant] = 1	
                 else:
                     indice = indice + 1
             else:
@@ -90,4 +102,4 @@ class web_crawler(object):
 
         self.idR = self.idR + 1			
 		
-spyder = web_crawler('https://www.directoalpaladar.com/recetas-de-pescados-y-mariscos/salmon-al-horno-con-frutos-secos-la-receta-definitiva')
+spyder = web_crawler()
