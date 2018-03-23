@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 10, 2018 at 08:27 PM
+-- Generation Time: Mar 23, 2018 at 05:13 PM
 -- Server version: 5.5.27
 -- PHP Version: 5.4.7
 
@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `ingredientes` (
-  `nombre` varchar(50) NOT NULL,
+  `nombre` varchar(200) NOT NULL,
   `idreceta` int(11) NOT NULL,
   `cantidad` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -40,13 +40,14 @@ CREATE TABLE IF NOT EXISTS `ingredientes` (
 
 CREATE TABLE IF NOT EXISTS `recetas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `titulo` varchar(100) NOT NULL,
+  `titulo` varchar(500) NOT NULL,
   `npersonas` int(11) NOT NULL,
   `tiempo` varchar(30) NOT NULL,
   `dificultad` varchar(30) NOT NULL,
-  `instrucciones` varchar(2000) NOT NULL,
+  `instrucciones` varchar(3000) NOT NULL,
+  `multimedia` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
