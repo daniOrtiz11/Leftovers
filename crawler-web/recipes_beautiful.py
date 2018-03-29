@@ -16,6 +16,9 @@ class web_crawler(object):
                self.personas = ""
                self.instrucciones = ""
                self.tiempo = ""
+               self.imagen = ""
+               self.video = ""
+               self.multimedia = 0 #1->img 2->video
                self.valida = False
                self.readWeb(linea)
                if(self.valida == True):
@@ -37,6 +40,16 @@ class web_crawler(object):
             mydivs = soup.findAll("div", {"class": "asset-recipe-meta"})
             self.ingredientes = mydivs[0].ul
             self.personas = soup.findAll("div", {"class": "asset-recipe-yield"})
+            self.imagen = soup.findAll("div", {"class": "article-asset-image article-asset-normal"})
+            self.video = soup.findAll("div", {"class": "article-asset-video article-asset-normal"})
+            if(len(self.imagen) > 1):
+                self.multimedia = 1
+                self.imagen = self.imagen[1].div
+                self.imagen = self.imagen.findAll("img")
+            else:
+                self.multimedia = 2
+                self.video = self.video[0].div
+            
         else:
             self.valida = False
 		
@@ -77,6 +90,18 @@ class web_crawler(object):
                 indice = indice + 1
         instaux = self.instrucciones.split('Con qué acompañar')
         self.instrucciones = instaux[0]
+        if(self.multimedia == 1):
+            auximg = self.imagen[0]
+            auximg = str(auximg)
+            auximg = auximg.split('data-sf-src')
+            auximg = auximg[1].split('"')
+            self.imagen = auximg[1]
+        else:
+            #auxvideo = self.video[0]
+            auxvideo = str(self.video)
+            auxvideo = auxvideo.split('src')
+            auxvideo = auxvideo[1].split('"')
+            self.video = auxvideo[1]
 
     def insertReceta(self):
         connection = pymysql.connect(host='localhost',
@@ -87,9 +112,12 @@ class web_crawler(object):
                              cursorclass=pymysql.cursors.DictCursor)
         try:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO `recetas` (`id`,`titulo`, `npersonas`, `tiempo`, `dificultad`, `instrucciones`) VALUES (%s, %s, %s, %s, %s, %s )"
-                cursor.execute(sql, (self.idR, self.titulo, self.personas, self.tiempo ,self.dificultad, self.instrucciones))
-            connection.commit()
+                sql = "INSERT INTO `recetas` (`id`,`titulo`, `npersonas`, `tiempo`, `dificultad`, `instrucciones`, `multimedia`) VALUES (%s, %s, %s, %s, %s, %s, %s )"
+                if(self.multimedia == 1):
+                    cursor.execute(sql, (self.idR, self.titulo, self.personas, self.tiempo ,self.dificultad, self.instrucciones, self.imagen))
+                else:
+                    cursor.execute(sql, (self.idR, self.titulo, self.personas, self.tiempo ,self.dificultad, self.instrucciones, self.video))
+                connection.commit()
             
             with connection.cursor() as cursor:
                 for k,v in self.ingredientes.items():
