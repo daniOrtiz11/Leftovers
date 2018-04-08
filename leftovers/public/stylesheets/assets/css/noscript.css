@@ -1,0 +1,23 @@
+@charset "UTF-8";
+
+/* Basic */
+
+	body:after {
+		display: none;
+	}
+
+/* Main */
+
+	#main {
+		-moz-transform: none !important;
+		-webkit-transform: none !important;
+		-ms-transform: none !important;
+		transform: none !important;
+		opacity: 1 !important;
+	}
+	
+/*
+Based on the template of:
+html5up.net | @ajlkn
+Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+*/
