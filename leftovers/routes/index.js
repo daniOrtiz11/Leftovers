@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var ingredientes = require('../models/ingredientes')
 
 exports.index = function(req, res){
 res.render('home', { title: 'ejs' });};
@@ -15,6 +16,7 @@ router.get('/principal/:modo?', function(req, res, next) {
 	var modo = req.query.modo;	
 	console.log(modo);
 	res.render('principal', { opcion: modo });
+  	
 	//var modo = req.query.modo;
 	/*
 	Si modo = 1, busca con filtro -> principal pestaña recetas
@@ -36,3 +38,7 @@ router.get('/receta', function(req, res, next) {
 	res.render('receta', { nombre: "" });
 });
 module.exports = router;
+
+//ingredientes.getLista(function(error, data){
+//		console.log(data);
+//	});
