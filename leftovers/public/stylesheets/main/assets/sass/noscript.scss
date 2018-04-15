@@ -4,14 +4,6 @@
 @import 'libs/skel';
 @import 'font-awesome.min.css';
 
-/*
-	Massively by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
-
-/* Wrapper */
-
 	#wrapper {
 		background-color:		_palette(wrapper-bg);
 		background-image:		url('../../images/overlay.png'),	linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1)),	url('../../images/bg.jpg');
@@ -41,3 +33,9 @@
 			}
 		}
 	}
+	
+/*
+	Based on the template of:
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+*/

@@ -29,4 +29,10 @@ router.get('/principal/:modo?', function(req, res, next) {
 	}
 	*/
 });
+router.get('/principal', function(req, res, next) {
+	res.render('principal', { opcion: 2 });
+});
+router.get('/receta', function(req, res, next) {
+	res.render('receta', { nombre: "" });
+});
 module.exports = router;
