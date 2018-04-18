@@ -1,12 +1,16 @@
 var express = require('express');
 var router = express.Router();
-var ingredientes = require('../models/ingredientes')
+var ingredientes = require('../models/ingredientes');
+var obj = {};
 
 exports.index = function(req, res){
 res.render('home', { title: 'ejs' });};
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('home', { title: 'Express' });
+router.get('/', function(req, res, next ){
+ingredientes.getLista(function(error, data){
+	obj = data;
+	});
+  res.render('home', { ingredientes: obj });
 });
 router.get('/image', function(req, res, next){
 	console.log(req.params.imagen);
