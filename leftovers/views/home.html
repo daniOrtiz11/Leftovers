@@ -6,9 +6,13 @@
 		<link rel="icon" href="images/avatarfavicon.png" type="image/gif">
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="stylesheets/home/assets/css/main.css" />
+		<link rel="stylesheet" href="stylesheets/home/assets/css/modal.css" />
 		<noscript><link rel="stylesheet" href="stylesheets/home/assets/css/noscript.css" /></noscript>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<!-- First, include the Webcam.js JavaScript Library -->
+		<script type="text/javascript" src="./webcam.min.js"></script>
+												<!-- Configure a few settings and attach camera -->
 	</head>
 	<body class="is-loading">
 		<!-- Wrapper -->
@@ -31,7 +35,17 @@
 									</div>
 								</li>
 								</br>
-								<li><a href="#" class="fa-camera">Buscar</a></li><br>
+								<li><a id="myBtn href="#" class="fa-camera" onclick="blockModal()">Buscar</a></li><br>
+								<div id="myModal" class="modal">
+								  <!-- Modal content -->
+								  <div class="modal-content">
+									<span class="close">&times;</span>
+										<div id="my_camera"></div><br>
+										<form>
+											<input type=button value="Hacer foto" onClick="take_snapshot()">
+										</form>
+								  </div>
+								</div>
 								<li><button class="btn btn-secondary" id="buttonSin" type="button" value="2">No quiero buscar por ingrediente</button></li>
 							</ul>
 						</footer>
@@ -59,6 +73,54 @@
 	$( "#buttonCon" ).click(function() {
 		window.location = '/principal?modo=' + 1;
 	});
+	
+		// Get the modal
+	var modal = document.getElementById('myModal');
+
+	// Get the <span> element that closes the modal
+	var span = document.getElementsByClassName("close")[0];
+
+	// When the user clicks on the button, open the modal 
+	function blockModal() {
+		modal.style.display = "block";
+		Webcam.set({
+				width: 400,
+				height: 240,
+				image_format: 'jpeg',
+				jpeg_quality: 90
+		});
+		Webcam.attach( '#my_camera' );
+	}
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
+
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+		if (event.target == modal) {
+			modal.style.display = "none";
+		}
+	}
+	
+	function take_snapshot() {
+				// take snapshot and get image data
+				Webcam.snap( function(data_uri) {
+					// display results in page
+					/*document.getElementById('results').innerHTML = 
+						'<h2>Here is your image:</h2>' + 
+						'<img src="'+data_uri+'"/>';*/
+					
+					$.get( "/image", { imagen: data_uri} )
+					
+					//Comparación con objeto de ingredientes
+					/*
+					
+					*/
+	})
+	}
+		
 	</script>
 
 	</body>

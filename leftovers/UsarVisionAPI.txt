@@ -1,0 +1,3 @@
+Bajar credenciales de Json de la plataforma.
+Descargar SDK google platform y añadir tu cuenta de google, seleccionando el proyecto.
+gcloud auth application-default login -> Desde consola
