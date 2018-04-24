@@ -1,11 +1,34 @@
-﻿import requests
-import pymysql
+﻿import pymysql
+import urllib
+
+#uncomment in case you have trouble with ascii encoding
+"""import sys
+reload(sys)
+sys.setdefaultencoding('UTF8')"""
+
 
 from bs4 import BeautifulSoup
 # -*- coding: utf-8 -*-
 
 class web_crawler(object):
     def __init__(self):
+        self.stopping_words = [' al gusto ', ' para guarnicion ', ' un pegotito ', 
+                                      ' al 65 % de cacao ', 
+                                      ' tibia ', ' caliente ', ' fría', 'fria', 'frio', 'frío', 
+                                      'B-', 'A-', 'para decorar', 'una buena pizca', 
+                                      'un chorrito al gusto', 'un chorrito', 'abundante', 
+                                      ' M ', ' L ', ' S ', ' XS ', ' XL ', ' XXL ', 'media cucharada',
+                                      'media cucharadita', 'para engrasar el molde', 
+                                      'tamaño M', 'tamaño L', 'tamaño S', 'tamaño XS', 
+                                      'tamaño XL', 'tamaño XXL', 'media', 'medio', 
+                                      'pequeña', 'pequeño', 'mediano', 'mediana', 
+                                      'grande', 'abundante para cocer', 'abundante', 
+                                      'maduro', 'maduro y aromatico', 'opcional', 
+                                      'aprox', 'aproximadamente', 'pequeñas', 'pequeños', 
+                                      'medianas', 'medianos', 'grandes', 'variados', 
+                                      'variados al gusto', 'baby', 'cortados solos los tallos verdes', 
+                                      'la mgia necesaria', 'en porciones', 'un chorrito al gusto', ' al ', 'talla M']
+        self.stop_punct = [' y ',' o ',' u ',',','(','[','1','2','3','4','5','6','7','8','9','0']
         with open("urls.txt") as fichero:
             self.idR = 1
             for linea in fichero:
@@ -24,34 +47,37 @@ class web_crawler(object):
                if(self.valida == True):
                    self.cleanParams()
                    self.insertReceta()
+               
 		
     def readWeb(self,url):
-        req = requests.get(url)
-        soup = BeautifulSoup(req.text, "lxml")
-        self.titulo = soup.h1.string 
-        self.instrucciones = soup.findAll("div", {"class": "blob js-post-images-container"})
-        self.tiempo = soup.findAll("li", {"class": "asset-recipe-list-item m-is-totaltime"})
-        longt = len(self.tiempo)
-        if(longt > 0):
-            self.valida = True
-            self.tiempo = self.tiempo[0].get_text()
-            self.instrucciones = self.instrucciones[1].get_text()
-            self.dificultad = soup.findAll("div", {"class": "asset-recipe-difficulty"})
-            mydivs = soup.findAll("div", {"class": "asset-recipe-meta"})
-            self.ingredientes = mydivs[0].ul
-            self.personas = soup.findAll("div", {"class": "asset-recipe-yield"})
-            self.imagen = soup.findAll("div", {"class": "article-asset-image article-asset-normal"})
-            self.video = soup.findAll("div", {"class": "article-asset-video article-asset-normal"})
-            if(len(self.imagen) > 1):
-                self.multimedia = 1
-                self.imagen = self.imagen[1].div
-                self.imagen = self.imagen.findAll("img")
+        #req = requests.get(url)
+        req = urllib.request.urlopen(url).read()
+        if req != None:
+            soup = BeautifulSoup(req, 'lxml')
+            self.titulo = soup.h1.string
+            self.instrucciones = soup.findAll("div", {"class": "blob js-post-images-container"})
+            self.tiempo = soup.findAll("li", {"class": "asset-recipe-list-item m-is-totaltime"})
+            longt = len(self.tiempo)
+            if(longt > 0):
+                self.valida = True
+                self.tiempo = self.tiempo[0].get_text()
+                self.instrucciones = self.instrucciones[1].get_text()
+                self.dificultad = soup.findAll("div", {"class": "asset-recipe-difficulty"})
+                mydivs = soup.findAll("div", {"class": "asset-recipe-meta"})
+                self.ingredientes = mydivs[0].ul
+                self.personas = soup.findAll("div", {"class": "asset-recipe-yield"})
+                self.imagen = soup.findAll("div", {"class": "article-asset-image article-asset-normal"})
+                self.video = soup.findAll("div", {"class": "article-asset-video article-asset-normal"})
+                if(len(self.imagen) > 1):
+                    self.multimedia = 1
+                    self.imagen = self.imagen[1].div
+                    self.imagen = self.imagen.findAll("img")
+                else:
+                    self.multimedia = 2
+                    self.video = self.video[0].div
+                
             else:
-                self.multimedia = 2
-                self.video = self.video[0].div
-            
-        else:
-            self.valida = False
+                self.valida = False
 		
     def cleanParams(self):
         times = self.tiempo.split('\n')
@@ -121,13 +147,24 @@ class web_crawler(object):
             
             with connection.cursor() as cursor:
                 for k,v in self.ingredientes.items():
+                    key = self.parseIngrediente(k)
                     sql = "INSERT INTO `ingredientes` (`nombre`, `idreceta`, `cantidad`) VALUES (%s, %s, %s)"
-                    cursor.execute(sql, (k, self.idR, v))
+                    cursor.execute(sql, (key, self.idR, v))
             connection.commit()
 
         finally:
             connection.close()
 
-        self.idR = self.idR + 1			
+        self.idR = self.idR + 1	
+    
+    def parseIngrediente(self, ingrediente):
+        ingr = ingrediente
+        for punct in self.stop_punct:
+            i_splitted = ingr.split(punct)
+            ingr = i_splitted[0]
+        for a in self.stopping_words:
+            i_splitted = ingr.split(a)
+            ingr = i_splitted[0]
+        return ingr
 		
 spyder = web_crawler()
