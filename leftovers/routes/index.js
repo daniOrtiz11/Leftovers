@@ -16,6 +16,7 @@ router.get('/', function(req, res, next) {
 		obj = data;
   });
   res.render('home', { ingredientes: obj });
+  
 });
 router.get('/principal/:modo?', function(req, res, next) {
 	var modo = req.query.modo;	
@@ -61,12 +62,14 @@ router.get('/image', function(req, res, next) {
 		for (var i = 0, len = labels.length; i < len; i++) {
 			translate(labels[i].description, {to: 'es'}).then(resul => {
 				someIngredients[i] = resul.text;
-				console.log(someIngredients[i]);
+				
 			}).catch(err => {
 				console.error(err);
 			});
+			if(i==len-1){
+				res.send({transIng: JSON.stringify(someIngredients)});
+			}
 		}
-		res.render('home', {posIng: someIngredients});
 		 })
 		.catch(err => {
 			console.error('ERROR:', err);

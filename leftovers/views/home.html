@@ -41,9 +41,14 @@
 								  <div class="modal-content">
 									<span class="close">&times;</span>
 										<div id="my_camera"></div><br>
-										<form>
+										<form id="photo">
 											<input type=button value="Hacer foto" onClick="take_snapshot()">
 										</form>
+										<div id="answer" style=display:none>
+											<p>Tu ingrediente es una Naranja?</p>
+											<input type=button value="Hacer otra foto" onClick="changeButtons()">
+											<input type=button value="Añadir" onClick="">
+										</div>
 								  </div>
 								</div>
 								<li><button class="btn btn-secondary" id="buttonSin" type="button" value="2">No quiero buscar por ingrediente</button></li>
@@ -91,6 +96,12 @@
 		});
 		Webcam.attach( '#my_camera' );
 	}
+	
+	function changeButtons(){
+		document.getElementById('answer').style.display = "none";
+		document.getElementById('photo').style.display = "block";
+		Webcam.unfreeze();
+	}
 
 	// When the user clicks on <span> (x), close the modal
 	span.onclick = function() {
@@ -111,9 +122,19 @@
 					/*document.getElementById('results').innerHTML = 
 						'<h2>Here is your image:</h2>' + 
 						'<img src="'+data_uri+'"/>';*/
-					
-					$.get( "/image", { imagen: data_uri} )
-					
+								Webcam.set({
+				width: 400,
+				height: 240,
+				image_format: 'jpeg',
+				jpeg_quality: 90
+		});
+					Webcam.freeze();
+					document.getElementById('answer').style.display = "block";
+					document.getElementById('photo').style.display = "none";
+					data = data_uri;
+					$.get( "/image", { imagen: data_uri}, function(data){
+						alert(JSON.stringify(data));
+					});
 					//Comparación con objeto de ingredientes
 					/*
 					
