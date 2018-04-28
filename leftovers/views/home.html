@@ -44,8 +44,11 @@
 										<form id="photo">
 											<input type=button value="Hacer foto" onClick="take_snapshot()">
 										</form>
-										<div id="answer" style=display:none>
-											<p>Tu ingrediente es una Naranja?</p>
+										<div id="answer" style="display:none;">
+											<center><div id="contenedor" style=display:none>
+												<div class="loader" id="loader">Loading...</div>
+											</div></center>
+											<label id="ingrSearch"></label>
 											<input type=button value="Hacer otra foto" onClick="changeButtons()">
 											<input type=button value="Añadir" onClick="">
 										</div>
@@ -101,6 +104,7 @@
 	function changeButtons(){
 		document.getElementById('answer').style.display = "none";
 		document.getElementById('photo').style.display = "block";
+		document.getElementById('ingrSearch').innerHTML = "";
 		Webcam.unfreeze();
 	}
 
@@ -117,6 +121,9 @@
 	}
 	
 	function take_snapshot() {
+	
+	var ingrVision;
+	var ingrBD;
 				// take snapshot and get image data
 				Webcam.snap( function(data_uri) {
 					// display results in page
@@ -130,19 +137,40 @@
 				jpeg_quality: 90
 		});
 					Webcam.freeze();
+					document.getElementById('contenedor').style.display = "block";
 					document.getElementById('answer').style.display = "block";
 					document.getElementById('photo').style.display = "none";
 					data = data_uri;
+					
 					$.get( "/image", { imagen: data_uri}, function(data){
-						alert(JSON.stringify(data));
-						
-						
-						
+						//alert(JSON.stringify(data));
+						ingrVision = data;
+						//alert(obj);
+					});
+					
+					$.get( "/ingr", {}, function(data){
+						//alert(JSON.stringify(data));
+						ingrBD = data;
+						var i = 0;
+						var ok = false;
+						var ingrediente = "";
+						while (i < ingrVision.length && !ok) { 
+							var j = 0;
+							while(j < ingrBD.length && !ok){
+								if(ingrVision[i] == ingrBD[j].nombre){
+									ok = true;
+									ingrediente = ingrVision[i];
+								}
+								j++;
+							}
+							i++;
+						}
+						document.getElementById('contenedor').style.display = "none";
+						if(ingrediente != "") document.getElementById('ingrSearch').innerHTML = 'Tu ingrediente es...' + ingrediente + '!';
+						else  document.getElementById('ingrSearch').innerHTML = 'No lo reconocemos..haz otra foto!';
+						//alert(obj);
 					});
 					//Comparación con objeto de ingredientes
-					/*
-					
-					*/
 	})
 	}
 		

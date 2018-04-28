@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var ingredientes = require('../models/ingredientes');
-var obj = {};
 var vision = require('@google-cloud/vision');
 var fs = require('fs');
 var ba64 = require("ba64");
@@ -11,16 +10,13 @@ GOOGLE_APPLICATION_CREDENTIALS="./Leftovers.json";
 
 //Variables
 var someIngredients = [];
-
+var obj = [];
 
 exports.index = function(req, res){
 res.render('home', { title: 'ejs' });};
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  ingredientes.getLista(function(error, data){
-		obj = data;
-  });
-  res.render('home', { ingredientes: obj });
+res.render('home', { title: 'ejs' });
 });
 router.get('/principal/:modo?', function(req, res, next) {
 	var modo = req.query.modo;	
@@ -55,7 +51,7 @@ router.get('/image', function(req, res, next) {
 	
 	// Performs label detection on the image file - req.query.imagen contains image
 		client
-		.labelDetection('./myimage.jpeg')
+		.labelDetection('./naranja.png')
 		.then(results => {
 		const labels = results[0].labelAnnotations;
 
@@ -73,11 +69,24 @@ router.get('/image', function(req, res, next) {
 		.catch(err => {
 			console.error('ERROR:', err);
 		});
-		setTimeout(sendToFront, 10000,res);
+		setTimeout(sendToFront, 2500,res);
+});
+
+router.get('/ingr', function(req, res, next) {
+  ingredientes.getLista(function(error, data){
+		obj = data;
+  });
+  setTimeout(sendToFrontIngr, 2500,res);
 });
 
 function sendToFront(res){
 	res.send(someIngredients);
+	someIngredients = [];
+}
+
+function sendToFrontIngr(res){
+	res.send(obj);
+	obj = {};
 }
 
 module.exports = router;
