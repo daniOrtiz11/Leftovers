@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var ingredientes = require('../models/ingredientes');
+var database = require('../models/database');
 var vision = require('@google-cloud/vision');
 var fs = require('fs');
 var ba64 = require("ba64");
@@ -22,7 +23,8 @@ router.get('/principal/:modo?', function(req, res, next) {
 	var modo = req.query.modo;	
 	console.log(modo);
 	res.render('principal', { opcion: modo });
-  	
+
+	
 	//var modo = req.query.modo;
 	/*
 	Si modo = 1, busca con filtro -> principal pestaña recetas
@@ -76,6 +78,16 @@ router.get('/ingr', function(req, res, next) {
   ingredientes.getLista(function(error, data){
 		obj = data;
   });
+
+  /*
+  database.connection.query('SELECT nombre FROM ingredientes', function(error, results){
+	if(error){
+		console.log(error.code);
+	}	
+	else{
+		obj = results;
+	}
+  */
   setTimeout(sendToFrontIngr, 2500,res);
 });
 
@@ -91,6 +103,36 @@ function sendToFrontIngr(res){
 
 module.exports = router;
 
-//ingredientes.getLista(function(error, data){
-//		console.log(data);
-//	});
+//selecciona todos los ingredientes con un nombre
+
+/*database.connection.query('SELECT * FROM ingredientes WHERE nombre = ?', ['Sal'], function(err, result){
+	if(err)
+		console.log(err.code);
+	else
+		obj = result;
+		// console.log(result);
+});*/
+
+//seleccion el id de las recetas que contienen un ingrediente
+/*
+database.connection.query('SELECT idreceta FROM ingredientes WHERE nombre = ?', ['Sal'], function(err, result){
+	if(err)
+		console.log(err.code);
+	else
+		console.log(result);
+		//obj = result;
+});
+*/
+
+//selecciona el titulo de una receta a partir de su identificador
+/*
+database.connection.query('SELECT titulo FROM recetas WHERE id = ?', [2], function(err, result){
+	if(err)
+		console.log(err.code);
+	else
+		console.log(result);
+});
+*/
+  	
+
+
