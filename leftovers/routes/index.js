@@ -12,6 +12,9 @@ GOOGLE_APPLICATION_CREDENTIALS="./Leftovers.json";
 //Variables
 var someIngredients = [];
 var obj = [];
+//puestas solo para la prueba del filtro
+var filtrarPor = [];
+
 
 exports.index = function(req, res){
 res.render('home', { title: 'ejs' });};
@@ -24,7 +27,6 @@ router.get('/principal/:modo?', function(req, res, next) {
 	console.log(modo);
 	res.render('principal', { opcion: modo });
 
-	
 	//var modo = req.query.modo;
 	/*
 	Si modo = 1, busca con filtro -> principal pestaña recetas
@@ -87,6 +89,7 @@ router.get('/ingr', function(req, res, next) {
 	else{
 		obj = results;
 	}
+});
   */
   setTimeout(sendToFrontIngr, 2500,res);
 });
@@ -101,6 +104,71 @@ function sendToFrontIngr(res){
 	obj = {};
 }
 
+
+//obtener recetas - ingredientes: uso --> filtrarPor = ['Sal', 'Huevo']; getRecipes(filtrarPor);
+function getAllIngredients(callback){
+	var sql = 'SELECT * FROM ingredientes';
+	database.connection.query(sql, function(error, result)
+	{
+	if(error)
+		throw error;
+	else{
+		callback(null, result);
+	}
+	});
+}
+
+
+function filterIngrs(recetas) {
+    return function(element) {
+        for (var index = 0; index < recetas.length; index++) {  
+		if (element.idreceta == recetas[index]) {  
+		    return true;  
+		}  
+	}   
+    	return false;
+	}
+}
+
+function getRecipes(filtrarPor){
+	getAllIngredients(function(error, obtainedBd){
+		//console.log(obtainedBd);
+		recetas = [];
+		for (var index = 0; index < filtrarPor.length; index++){
+			//se obtienen las recetas que tienen ese ingrediente
+			recetas = (obtainedBd.filter(ingr => ingr.nombre == filtrarPor[index])).map(a => a.idreceta);
+			console.log(recetas);
+			//se actualiza la lista de ingredientes para que solo contenga las apariciones de ingredientes de esas recetas			
+			obtainedBd = obtainedBd.filter(filterIngrs(recetas));
+			console.log(obtainedBd);
+		}
+		
+		recetasAlgunoMas = [];
+		for (var index = 0; index < obtainedBd.length; index++){
+			elem = obtainedBd[index];
+			if(filtrarPor.indexOf(elem.nombre) < 0){
+				if(recetasAlgunoMas.indexOf(elem.idreceta)<0)
+					recetasAlgunoMas.push(elem.idreceta);			
+			}
+		}
+		//console.log(recetasAlgunoMas);
+
+		recetasSoloEsosIngredientes = []
+		todasLasRecetas = obtainedBd.map(a => a.idreceta);
+		//console.log(todasLasRecetas);
+
+		for(var index = 0; index < todasLasRecetas.length; index++){
+			inReceta = todasLasRecetas[index];
+			if(recetasAlgunoMas.indexOf(inReceta) < 0){
+				if(recetasSoloEsosIngredientes.indexOf(inReceta) < 0)
+					recetasSoloEsosIngredientes.push(inReceta);
+			}
+		}
+		//console.log(recetasSoloEsosIngredientes);
+  	});
+}
+
+
 module.exports = router;
 
 //selecciona todos los ingredientes con un nombre
@@ -109,8 +177,7 @@ module.exports = router;
 	if(err)
 		console.log(err.code);
 	else
-		obj = result;
-		// console.log(result);
+		console.log(result);
 });*/
 
 //seleccion el id de las recetas que contienen un ingrediente
@@ -120,7 +187,6 @@ database.connection.query('SELECT idreceta FROM ingredientes WHERE nombre = ?', 
 		console.log(err.code);
 	else
 		console.log(result);
-		//obj = result;
 });
 */
 

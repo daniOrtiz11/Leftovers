@@ -27,8 +27,9 @@ class web_crawler(object):
                                       'aprox', 'aproximadamente', 'pequeñas', 'pequeños', 
                                       'medianas', 'medianos', 'grandes', 'variados', 
                                       'variados al gusto', 'baby', 'cortados solos los tallos verdes', 
-                                      'la mgia necesaria', 'en porciones', 'un chorrito al gusto', ' al ', 'talla M']
-        self.stop_punct = [' y ',' o ',' u ',',','(','[','1','2','3','4','5','6','7','8','9','0']
+                                      'la mgia necesaria', 'en porciones', 'un chorrito al gusto', ' al ', 
+                                      'talla M',' y ',' o ',' u ',',','(','[','1','2','3','4','5','6',
+                                      '7','8','9','0', 'fresco', 'picado']
         with open("urls.txt") as fichero:
             self.idR = 1
             for linea in fichero:
@@ -90,7 +91,10 @@ class web_crawler(object):
             self.dificultad = "Dificil"
         personasaux = self.personas[0].string.split('Para ')
         personasaux = personasaux[1].split(' ')
-        self.personas = personasaux[0]
+        if personasaux[0] != '':
+            self.personas = personasaux[0]
+        else:
+            self.personas = '1'
         
         ingliaux = self.ingredientes.get_text()
         lista = ingliaux.split('\n')
@@ -159,12 +163,9 @@ class web_crawler(object):
     
     def parseIngrediente(self, ingrediente):
         ingr = ingrediente
-        for punct in self.stop_punct:
-            i_splitted = ingr.split(punct)
-            ingr = i_splitted[0]
         for a in self.stopping_words:
             i_splitted = ingr.split(a)
-            ingr = i_splitted[0]
+            ingr = i_splitted[0].strip()
         return ingr
 		
 spyder = web_crawler()
