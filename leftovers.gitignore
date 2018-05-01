@@ -1,0 +1,2 @@
+#ignorar dependencias de node, mejor tener controlada cada uno su version en local
+/leftovers/node_modules/
