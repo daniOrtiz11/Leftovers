@@ -7,8 +7,9 @@
 		<link rel="icon" href="images/avatarfavicon.png" type="image/gif">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="stylesheets/main/assets/css/main.css" />
-		<link rel="stylesheet" href="stylesheets/home/assets/css/modal.css" />
 		<noscript><link rel="stylesheet" href="stylesheets/main/assets/css/noscript.css" /></noscript>
+        <link rel="stylesheet" href="stylesheets/main/assets/css/modal.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script type="text/javascript" src="./webcam.min.js"></script>
 	</head>
@@ -32,27 +33,44 @@
 						</ul>
 						<ul class="icons">
 							<li><a href="#" class="icon fa-camera" onclick="blockModal()"><span class="label">Camera</span></a></li>
-							<div id="myModal" class="modal">
-								  <!-- Modal content -->
-								  <div class="modal-content">
-									<span class="close">&times;</span>
-										<div id="my_camera"></div><br>
-										<form id="photo">
-											<input type=button value="Hacer foto" onClick="take_snapshot()">
-										</form>
-										<div id="answer" style=display:none>
-											<p>Tu ingrediente es una Naranja?</p>
-											<input type=button value="Hacer otra foto" onClick="changeButtons()">
-											<input type=button value="Añadir" onClick="">
-										</div>
-								  </div>
-							</div>
 						</ul>
 					</nav>
 
 				<!-- Main -->
 					<div id="main">
+							<div id="myModal" class="modal">
+								  <!-- Modal content -->
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="modal-content col-md-6">
+                                        <div class="modal-header">
+                                          <h3 class="modal-title">Captura el ingrediente!</h3>
+                                            <span class="close" aria-hidden="true">&times;</span>
+                                        </div>
+                                        <div class="modal-body row">
+                                            <div class="col-md-2"></div>
+                                            <div id="my_camera" class="col-md-8"></div>
+                                            <div class="col-md-2"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div id="photo">
+                                                <input type=button value="Hacer foto" onClick="take_snapshot()">
+                                            </div>
 
+                                            <div id="answer" style=display:none>
+                                            <center><div id="contenedor" style=display:none>
+												<div class="loader" id="loader">Loading...</div>
+											</div></center>
+                                                <!--<label id="ingrSearch"></label> -->
+                                                <p>Tu ingrediente es una Naranja?</p>
+                                                <input type=button value="Hacer otra foto" onClick="changeButtons()">
+                                                <input type=button value="Añadir" onClick="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3"></div>
+                                </div>
+							</div>
 						<!-- Featured Post -->
 							<article class="post featured">
 								<header class="major">
@@ -178,8 +196,8 @@
 	function blockModal() {
 		modal.style.display = "block";
 		Webcam.set({
-				width: 400,
-				height: 240,
+				width: "Auto",
+				height: "Auto",
 				image_format: 'jpeg',
 				jpeg_quality: 90
 		});
@@ -212,8 +230,8 @@
 						'<h2>Here is your image:</h2>' + 
 						'<img src="'+data_uri+'"/>';*/
 								Webcam.set({
-				width: 400,
-				height: 240,
+				width: "Auto",
+				height: "Auto",
 				image_format: 'jpeg',
 				jpeg_quality: 90
 		});
