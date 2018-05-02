@@ -31,7 +31,7 @@
 									  <span class="input-group-btn">
 										<button  id="buttonCon" class="btn btn-secondary" type="button" value="1">Buscar!</button>
 									  </span>
-									  <input type="text" class="form-control" placeholder="Ingredientes...">
+									  <input id="textIngred"type="text" class="form-control" placeholder="Ingredientes...">
 									</div>
 								</li>
 								<br>
@@ -63,10 +63,9 @@
                                                 <center><div id="contenedor" style=display:none>
                                                     <div class="loader" id="loader">Loading...</div>
                                                 </div></center>
-                                                    <!--<label id="ingrSearch"></label> -->
-                                                    <p>Tu ingrediente es una Naranja?</p>
+                                                    <label id="ingrSearch"></label> 
                                                     <input type=button value="Hacer otra foto" onClick="changeButtons()">
-                                                    <input type=button value="Añadir" onClick="">
+                                                    <button id="add" value="Añadir">Añadir</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -84,7 +83,6 @@
 
 		<!-- Scripts -->
 	<script>
-
 		if ('addEventListener' in window) {
 			window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
 			document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
@@ -94,21 +92,35 @@
 		window.location = '/principal?modo=' + 2;
 	});
 	$( "#buttonCon" ).click(function() {
-		window.location = '/principal?modo=' + 1;
+		window.location = '/principal?modo=' + 1+'&ing='+document.getElementById('textIngred').value;
 	});
 	
+	$("#textIngred").on("input", function() {
+		if($('#textIngred').val() == ''){
+			document.getElementById("buttonCon").disabled = true;
+		} else{
+			document.getElementById("buttonCon").disabled = false;
+		}
+	});
+	
+	
+	var ingrediente = "";
+	$( "#add" ).click(function() {
+		window.location = '/principal?modo='+1+'&ing='+ingrediente;
+	});
 		// Get the modal
 	var modal = document.getElementById('myModal');
 
 	// Get the <span> element that closes the modal
 	var span = document.getElementsByClassName("close")[0];
-
+	document.getElementById("add").disabled = true;
+	document.getElementById("buttonCon").disabled = true;
 	// When the user clicks on the button, open the modal 
 	function blockModal() {
 		modal.style.display = "block";
 		Webcam.set({
-				width: "Auto",
-				height: "Auto",
+				width: 440,
+				height: 300,
 				image_format: 'jpeg',
 				jpeg_quality: 90
 		});
@@ -119,6 +131,7 @@
 		document.getElementById('answer').style.display = "none";
 		document.getElementById('photo').style.display = "block";
 		document.getElementById('ingrSearch').innerHTML = "";
+		document.getElementById("add").disabled = true;
 		Webcam.unfreeze();
 	}
 
@@ -144,34 +157,34 @@
 					/*document.getElementById('results').innerHTML = 
 						'<h2>Here is your image:</h2>' + 
 						'<img src="'+data_uri+'"/>';*/
-								Webcam.set({
-				width: "Auto",
-				height: "Auto",
-				image_format: 'jpeg',
-				jpeg_quality: 90
-		});
+				Webcam.set({
+					width: 440,
+					height: 300,
+					image_format: 'jpeg',
+					jpeg_quality: 90
+				});
 					Webcam.freeze();
 					document.getElementById('contenedor').style.display = "block";
 					document.getElementById('answer').style.display = "block";
 					document.getElementById('photo').style.display = "none";
-					data = data_uri;
+					//data = data_uri;
 					
-					$.get( "/image", { imagen: data_uri}, function(data){
-						//alert(JSON.stringify(data));
-						ingrVision = data;
+					$.get( "/ingr", {}, function(data){
+						//alert(JSON.stringify(data[0].nombre.toLowerCase()));
+						ingrBD = data;
 						//alert(obj);
 					});
 					
-					$.get( "/ingr", {}, function(data){
+					$.get( "/image", {imagen:data_uri}, function(data){
 						//alert(JSON.stringify(data));
-						ingrBD = data;
+						ingrVision = data;
+						//alert(obj);
 						var i = 0;
 						var ok = false;
-						var ingrediente = "";
 						while (i < ingrVision.length && !ok) { 
 							var j = 0;
 							while(j < ingrBD.length && !ok){
-								if(ingrVision[i] == ingrBD[j].nombre){
+								if((ingrVision[i].toLowerCase()) == (ingrBD[j].nombre.toLowerCase())){
 									ok = true;
 									ingrediente = ingrVision[i];
 								}
@@ -180,9 +193,12 @@
 							i++;
 						}
 						document.getElementById('contenedor').style.display = "none";
-						if(ingrediente != "") document.getElementById('ingrSearch').innerHTML = 'Tu ingrediente es...' + ingrediente + '!';
-						else  document.getElementById('ingrSearch').innerHTML = 'No lo reconocemos..haz otra foto!';
-						//alert(obj);
+						if(ingrediente != ""){ 
+							document.getElementById('ingrSearch').innerHTML = 'Tu ingrediente es...' + ingrediente + '!';
+							document.getElementById("add").disabled = false;
+						}else{ 
+							document.getElementById('ingrSearch').innerHTML = 'No lo reconocemos..haz otra foto!';
+						}
 					});
 					//Comparación con objeto de ingredientes
 	})

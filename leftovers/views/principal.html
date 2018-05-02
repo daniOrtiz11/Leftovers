@@ -61,10 +61,9 @@
                                             <center><div id="contenedor" style=display:none>
 												<div class="loader" id="loader">Loading...</div>
 											</div></center>
-                                                <!--<label id="ingrSearch"></label> -->
-                                                <p>Tu ingrediente es una Naranja?</p>
+                                                <label id="ingrSearch"></label>
                                                 <input type=button value="Hacer otra foto" onClick="changeButtons()">
-                                                <input type=button value="Añadir" onClick="">
+                                                <button id="add" value="Añadir" onClick="window.location.href='/principal'">Añadir</button>
                                             </div>
                                         </div>
                                     </div>
@@ -186,18 +185,36 @@
 			<script src="stylesheets/main/assets/js/main.js"></script>
 
 	<script>
+	$('document').ready(function(){
+	var url_string = $(location).attr('href');
+	var url = new URL(url_string);
+	var modo = url.searchParams.get("modo");
+	var ingrediente = url.searchParams.get("ing");
+	//console.log(ingrediente);
+	if(ingrediente != null){
+		$.get( "/recipes", {ing:ingrediente}, function(data){
+		// Recetas en data.recetasSoloEsosIngredientes /// data.recetasAlgunoMas
+			//alert(data.recetasSoloEsosIngredientes);
+			//alert(data.recetasAlgunoMas);
+		});
+	}
+		if ('addEventListener' in window) {
+			window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
+			document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+		}
+
 		// Get the modal
 	var modal = document.getElementById('myModal');
 
 	// Get the <span> element that closes the modal
 	var span = document.getElementsByClassName("close")[0];
-
+	document.getElementById("add").disabled = true;
 	// When the user clicks on the button, open the modal 
 	function blockModal() {
 		modal.style.display = "block";
 		Webcam.set({
-				width: "Auto",
-				height: "Auto",
+				width: 440,
+				height: 300,
 				image_format: 'jpeg',
 				jpeg_quality: 90
 		});
@@ -207,6 +224,8 @@
 	function changeButtons(){
 		document.getElementById('answer').style.display = "none";
 		document.getElementById('photo').style.display = "block";
+		document.getElementById('ingrSearch').innerHTML = "";
+		document.getElementById("add").disabled = true;
 		Webcam.unfreeze();
 	}
 
@@ -223,34 +242,63 @@
 	}
 	
 	function take_snapshot() {
+	
+	var ingrVision;
+	var ingrBD;
 				// take snapshot and get image data
 				Webcam.snap( function(data_uri) {
 					// display results in page
 					/*document.getElementById('results').innerHTML = 
 						'<h2>Here is your image:</h2>' + 
 						'<img src="'+data_uri+'"/>';*/
-								Webcam.set({
-				width: "Auto",
-				height: "Auto",
+				Webcam.set({
+				width: 440,
+				height: 300,
 				image_format: 'jpeg',
 				jpeg_quality: 90
-		});
+				});
 					Webcam.freeze();
+					document.getElementById('contenedor').style.display = "block";
 					document.getElementById('answer').style.display = "block";
 					document.getElementById('photo').style.display = "none";
-					data = data_uri;
-					$.get( "/image", { imagen: data_uri}, function(data){
-						alert(JSON.stringify(data));
-						
-						
-						
+					//data = data_uri;
+					
+					$.get( "/ingr", {}, function(data){
+						//alert(JSON.stringify(data));
+						ingrBD = data;
+						//alert(obj);
+					});
+					
+					$.get( "/image", {imagen:data_uri}, function(data){
+						//alert(JSON.stringify(data));
+						ingrVision = data;
+						//alert(obj);
+						var i = 0;
+						var ok = false;
+						var ingrediente = "";
+						while (i < ingrVision.length && !ok) { 
+							var j = 0;
+							while(j < ingrBD.length && !ok){
+								if(ingrVision[i] == ingrBD[j].nombre){
+									ok = true;
+									ingrediente = ingrVision[i];
+								}
+								j++;
+							}
+							i++;
+						}
+						document.getElementById('contenedor').style.display = "none";
+						if(ingrediente != ""){ 
+							document.getElementById('ingrSearch').innerHTML = 'Tu ingrediente es...' + ingrediente + '!';
+							document.getElementById("add").disabled = false;
+						}else{ 
+							document.getElementById('ingrSearch').innerHTML = 'No lo reconocemos..haz otra foto!';
+						}
 					});
 					//Comparación con objeto de ingredientes
-					/*
-					
-					*/
 	})
 	}
+	});
 	</script>
 	</body>
 		<!--

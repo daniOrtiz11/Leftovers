@@ -73,7 +73,7 @@ router.get('/image', function(req, res, next) {
 		.catch(err => {
 			console.error('ERROR:', err);
 		});
-		setTimeout(sendToFront, 2500,res);
+		setTimeout(sendToFront, 3000,res);
 });
 
 router.get('/ingr', function(req, res, next) {
@@ -130,7 +130,9 @@ function filterIngrs(recetas) {
 	}
 }
 
-function getRecipes(filtrarPor){
+router.get('/recipes', function(req, res, next){
+	//El ingrediente está en req.query.ing pero en minusculas entero.
+	filtrarPor = ['Huevo'];
 	getAllIngredients(function(error, obtainedBd){
 		//console.log(obtainedBd);
 		recetas = [];
@@ -140,7 +142,7 @@ function getRecipes(filtrarPor){
 			console.log(recetas);
 			//se actualiza la lista de ingredientes para que solo contenga las apariciones de ingredientes de esas recetas			
 			obtainedBd = obtainedBd.filter(filterIngrs(recetas));
-			console.log(obtainedBd);
+			//console.log(obtainedBd);
 		}
 		
 		recetasAlgunoMas = [];
@@ -151,7 +153,7 @@ function getRecipes(filtrarPor){
 					recetasAlgunoMas.push(elem.idreceta);			
 			}
 		}
-		//console.log(recetasAlgunoMas);
+		console.log(recetasAlgunoMas);
 
 		recetasSoloEsosIngredientes = []
 		todasLasRecetas = obtainedBd.map(a => a.idreceta);
@@ -164,9 +166,11 @@ function getRecipes(filtrarPor){
 					recetasSoloEsosIngredientes.push(inReceta);
 			}
 		}
-		//console.log(recetasSoloEsosIngredientes);
+		console.log(recetasSoloEsosIngredientes);
   	});
-}
+	res.send({recetasSoloEsosIngredientes, recetasAlgunoMas});
+});
+
 
 
 module.exports = router;
