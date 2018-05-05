@@ -107,7 +107,7 @@ function sendToFrontIngr(res){
 
 //obtener recetas - ingredientes: uso --> filtrarPor = ['Sal', 'Huevo']; getRecipes(filtrarPor);
 function getAllIngredients(callback){
-	var sql = 'SELECT * FROM ingredientes';
+	var sql = 'SELECT I.nombre, I.idreceta, I.cantidad, R.titulo, R.npersonas, R.tiempo, R.dificultad, R.instrucciones, R.multimedia FROM ingredientes I, recetas R where I.idreceta = R.id';
 	database.connection.query(sql, function(error, result)
 	{
 	if(error)
@@ -132,6 +132,7 @@ function filterIngrs(recetas) {
 
 router.get('/recipes', function(req, res, next){
 	//El ingrediente está en req.query.ing pero en minusculas entero.
+	//cadena.toUpperCase() para mayusculas, cadena.toLowerCase() para minusculas
 	filtrarPor = ['Huevo'];
 	getAllIngredients(function(error, obtainedBd){
 		//console.log(obtainedBd);
@@ -145,30 +146,66 @@ router.get('/recipes', function(req, res, next){
 			//console.log(obtainedBd);
 		}
 		
+		indexRecetasAlgunoMas = [];
 		recetasAlgunoMas = [];
 		for (var index = 0; index < obtainedBd.length; index++){
 			elem = obtainedBd[index];
 			if(filtrarPor.indexOf(elem.nombre) < 0){
-				if(recetasAlgunoMas.indexOf(elem.idreceta)<0)
-					recetasAlgunoMas.push(elem.idreceta);			
+				if(indexRecetasAlgunoMas.indexOf(elem.idreceta)<0){
+					indexRecetasAlgunoMas.push(elem.idreceta);
+					//insert = {id:elem.idreceta, titulo:elem.titulo, npersonas:elem.npersonas, tiempo:elem.tiempo, dificultad:elem.dificultad, instrucciones:elem.instrucciones, multimedia: elem.multimedia, ingredientes:[elem.nombre]};
+				}			
 			}
 		}
-		console.log(recetasAlgunoMas);
 
-		recetasSoloEsosIngredientes = []
-		todasLasRecetas = obtainedBd.map(a => a.idreceta);
+		//console.log(indexRecetasAlgunoMas);
+
+		ingredientesPorReceta = {};
+		for (var index = 0; index < obtainedBd.length; index++){
+			elem = obtainedBd[index];
+			if(ingredientesPorReceta.hasOwnProperty(String(elem.idreceta))){
+				ingredientes_receta = ingredientesPorReceta[String(elem.idreceta)];
+				ingrediente_cantidad = JSON.stringify({'nombre': elem.nombre, 'cantidad':elem.cantidad});
+				newstr = ingredientes_receta.concat([ingrediente_cantidad]);
+				ingredientesPorReceta[String(elem.idreceta)] = newstr;
+			}
+			else{
+				ingrediente_cantidad = JSON.stringify({'nombre': elem.nombre, 'cantidad':elem.cantidad});
+				ingredientesPorReceta[String(elem.idreceta)] = [ingrediente_cantidad];
+			}
+		}
+
+		recetasAlgunoMas = [];
+		for (var index = 0; index < indexRecetasAlgunoMas.length; index++){
+			for (var j = 0; j < obtainedBd.length; j++){
+				elem = obtainedBd[j];
+				if (elem.idreceta == indexRecetasAlgunoMas[index]){
+					insert = {'id':elem.idreceta, 'ingredientes':ingredientesPorReceta[String(elem.idreceta)], 'titulo':elem.titulo, 'npersonas':elem.npersonas, 'tiempo':elem.tiempo, 'dificultad':elem.dificultad, 'instrucciones':elem.instrucciones, 'multimedia': elem.multimedia};
+					recetasAlgunoMas.push(JSON.stringify(insert));
+					break;
+				}
+			}
+		}
+		
+		//console.log(recetasAlgunoMas);
+
+		recetasSoloEsosIngredientes = [];
+		inserted = [];
 		//console.log(todasLasRecetas);
 
-		for(var index = 0; index < todasLasRecetas.length; index++){
-			inReceta = todasLasRecetas[index];
-			if(recetasAlgunoMas.indexOf(inReceta) < 0){
-				if(recetasSoloEsosIngredientes.indexOf(inReceta) < 0)
-					recetasSoloEsosIngredientes.push(inReceta);
+		for(var index = 0; index < obtainedBd.length; index++){
+			elem = obtainedBd[index];			
+			if(indexRecetasAlgunoMas.indexOf(elem.idreceta) < 0 && (inserted.indexOf(elem.idreceta)<0)){
+				inserted.push(elem.idreceta);
+				insert = {'id':elem.idreceta, 'ingredientes':ingredientesPorReceta[String(elem.idreceta)], 'titulo':elem.titulo, 'npersonas':elem.npersonas, 'tiempo':elem.tiempo, 'dificultad':elem.dificultad, 'instrucciones':elem.instrucciones, 'multimedia': elem.multimedia};
+				recetasSoloEsosIngredientes.push(JSON.stringify(insert));
 			}
 		}
-		console.log(recetasSoloEsosIngredientes);
-  	});
+		//console.log(recetasSoloEsosIngredientes);
+		//console.log(recetasAlgunoMas);
+
 	res.send({recetasSoloEsosIngredientes, recetasAlgunoMas});
+  	});
 });
 
 
@@ -184,7 +221,7 @@ module.exports = router;
 		console.log(result);
 });*/
 
-//seleccion el id de las recetas que contienen un ingrediente
+//selecciona el id de las recetas que contienen un ingrediente
 /*
 database.connection.query('SELECT idreceta FROM ingredientes WHERE nombre = ?', ['Sal'], function(err, result){
 	if(err)
