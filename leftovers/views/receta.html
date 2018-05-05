@@ -25,23 +25,23 @@
 						<!-- Post -->
 							<section class="post">
 								<header class="major">
-									<h1>Título de la receta</h1>
+									<h1><label id="title">Título de la receta</label></h1>
 								</header>
 
 								<!-- Text stuff -->
 									<h2>Pinta</h2>
-                                    <a href="#" class="image main"><img src="images/main/default.jpg" alt="" /></a>
+                                    <a href="#" class="image main"><img id="image" src="images/main/default.jpg" alt="" /></a>
 									<hr />
                                     <h2>Detalles</h2>
                                     <ul>
-                                        <li>Nº de personas</li>
-                                        <li>Tiempo</li>
-                                        <li>Dificultad</li>
+                                        <li><label id="nPersonas">Nº de personas</label></li>
+                                        <li><label id="duracion">Tiempo</label></li>
+                                        <li><label id="dificultad">Dificultad</label></li>
                                     </ul>
                                     <hr />
                                     <h2> Ingredientes</h2>
 									<div class="table-wrapper">
-										<table>
+										<table id="tableIng">
 											<thead>
 												<tr>
 													<th>Ingrediente</th>
@@ -49,33 +49,13 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr>
-													<td>Item 1</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-												</tr>
-												<tr>
-													<td>Item 2</td>
-													<td>Vis ac commodo adipiscing arcu aliquet.</td>
-												</tr>
-												<tr>
-													<td>Item 3</td>
-													<td> Morbi faucibus arcu accumsan lorem.</td>
-												</tr>
-												<tr>
-													<td>Item 4</td>
-													<td>Vitae integer tempus condimentum.</td>
-												</tr>
-												<tr>
-													<td>Item 5</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-												</tr>
 											</tbody>
 										</table>
 									</div>
 									<hr />
                                     <h2>Instrucciones</h2>
                                     <div class="box">
-                                    <p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
+                                    <label id="instrucc">Lorem ipsum dolor sit amet nullam id egestas urna aliquam</label>
                                     </div>
 
 							</section>
@@ -91,6 +71,28 @@
 			<script src="stylesheets/main/assets/js/util.js"></script>
 			<script src="stylesheets/main/assets/js/main.js"></script>
 
+	<script>
+	var url_string = $(location).attr('href');
+	var url = new URL(url_string);
+	var recipe = url.searchParams.get("recipe");
+	var receta = JSON.parse(recipe);
+
+	document.getElementById("title").innerHTML= receta.titulo;
+	document.getElementById("image").src= receta.multimedia;
+	document.getElementById("nPersonas").innerHTML= "Número de comensales: " + receta.npersonas;
+	document.getElementById("duracion").innerHTML= "Tiempo de preparación: " + receta.tiempo + "inutos";
+	document.getElementById("dificultad").innerHTML= "Dificultad: "+ receta.dificultad;
+	var table = document.getElementById("tableIng");
+	for(var i = 0; i<receta.ingredientes.length;i++){
+		var ing = JSON.parse(receta.ingredientes[i]);
+		var row = table.insertRow(i+1);
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		cell1.innerHTML = ing.nombre;
+		cell2.innerHTML = ing.cantidad;
+	}
+	document.getElementById("instrucc").innerHTML= receta.instrucciones;
+	</script>
 	</body>
 	
 			<!--

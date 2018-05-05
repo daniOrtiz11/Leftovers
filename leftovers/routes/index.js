@@ -181,7 +181,7 @@ router.get('/recipes', function(req, res, next){
 				elem = obtainedBd[j];
 				if (elem.idreceta == indexRecetasAlgunoMas[index]){
 					insert = {'id':elem.idreceta, 'ingredientes':ingredientesPorReceta[String(elem.idreceta)], 'titulo':elem.titulo, 'npersonas':elem.npersonas, 'tiempo':elem.tiempo, 'dificultad':elem.dificultad, 'instrucciones':elem.instrucciones, 'multimedia': elem.multimedia};
-					recetasAlgunoMas.push(JSON.stringify(insert));
+					recetasAlgunoMas.push(insert);
 					break;
 				}
 			}
@@ -198,7 +198,7 @@ router.get('/recipes', function(req, res, next){
 			if(indexRecetasAlgunoMas.indexOf(elem.idreceta) < 0 && (inserted.indexOf(elem.idreceta)<0)){
 				inserted.push(elem.idreceta);
 				insert = {'id':elem.idreceta, 'ingredientes':ingredientesPorReceta[String(elem.idreceta)], 'titulo':elem.titulo, 'npersonas':elem.npersonas, 'tiempo':elem.tiempo, 'dificultad':elem.dificultad, 'instrucciones':elem.instrucciones, 'multimedia': elem.multimedia};
-				recetasSoloEsosIngredientes.push(JSON.stringify(insert));
+				recetasSoloEsosIngredientes.push(insert);
 			}
 		}
 		//console.log(recetasSoloEsosIngredientes);
