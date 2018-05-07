@@ -132,14 +132,19 @@ function filterIngrs(recetas) {
 
 router.get('/recipes', function(req, res, next){
 	//El ingrediente está en req.query.ing pero en minusculas entero.
-	//cadena.toUpperCase() para mayusculas, cadena.toLowerCase() para minusculas
 	filtrarPor = req.query.ing;
 	getAllIngredients(function(error, obtainedBd){
 		//console.log(obtainedBd);
+		//se incorpora un elemento con el nombre del ingrediente en minusculas para filtrar con el array, solo se usa en esta funcion
+		for (var index = 0; index < obtainedBd.length; index++){
+			elem = obtainedBd[index];
+			elem['nombremin'] = elem.nombre.toLowerCase();
+			obtainedBd[index] = elem;
+		}
 		recetas = [];
 		for (var index = 0; index < filtrarPor.length; index++){
 			//se obtienen las recetas que tienen ese ingrediente
-			recetas = (obtainedBd.filter(ingr => ingr.nombre == filtrarPor[index])).map(a => a.idreceta);
+			recetas = (obtainedBd.filter(ingr => ingr.nombremin == filtrarPor[index])).map(a => a.idreceta);
 			console.log(recetas);
 			//se actualiza la lista de ingredientes para que solo contenga las apariciones de ingredientes de esas recetas			
 			obtainedBd = obtainedBd.filter(filterIngrs(recetas));
@@ -150,10 +155,9 @@ router.get('/recipes', function(req, res, next){
 		recetasAlgunoMas = [];
 		for (var index = 0; index < obtainedBd.length; index++){
 			elem = obtainedBd[index];
-			if(filtrarPor.indexOf(elem.nombre) < 0){
+			if(filtrarPor.indexOf(elem.nombremin) < 0){
 				if(indexRecetasAlgunoMas.indexOf(elem.idreceta)<0){
 					indexRecetasAlgunoMas.push(elem.idreceta);
-					//insert = {id:elem.idreceta, titulo:elem.titulo, npersonas:elem.npersonas, tiempo:elem.tiempo, dificultad:elem.dificultad, instrucciones:elem.instrucciones, multimedia: elem.multimedia, ingredientes:[elem.nombre]};
 				}			
 			}
 		}
@@ -209,12 +213,40 @@ router.get('/recipes', function(req, res, next){
 });
 
 router.get('/recipesWithout', function(req, res, next){
-	//No se recibe nada.
-	recetas = [];
+	getAllIngredients(function(error, obtainedBd){
+		//No se recibe nada.
+		recetas = [];
 
-	//Coger todas las recetas, junto con sus ingredientes
+		ingredientesPorReceta = {};
+		for (var index = 0; index < obtainedBd.length; index++){
+			elem = obtainedBd[index];
+			if(ingredientesPorReceta.hasOwnProperty(String(elem.idreceta))){
+				ingredientes_receta = ingredientesPorReceta[String(elem.idreceta)];
+				ingrediente_cantidad = JSON.stringify({'nombre': elem.nombre, 'cantidad':elem.cantidad});
+				newstr = ingredientes_receta.concat([ingrediente_cantidad]);
+				ingredientesPorReceta[String(elem.idreceta)] = newstr;
+			}
+			else{
+				ingrediente_cantidad = JSON.stringify({'nombre': elem.nombre, 'cantidad':elem.cantidad});
+				ingredientesPorReceta[String(elem.idreceta)] = [ingrediente_cantidad];
+			}
+		}
 	
-	res.send(recetas);
+		inserted = [];
+
+		for(var index = 0; index < obtainedBd.length; index++){
+			elem = obtainedBd[index];			
+			if(inserted.indexOf(elem.idreceta)<0){
+				inserted.push(elem.idreceta);
+				insert = {'id':elem.idreceta, 'ingredientes':ingredientesPorReceta[String(elem.idreceta)], 'titulo':elem.titulo, 'npersonas':elem.npersonas, 'tiempo':elem.tiempo, 'dificultad':elem.dificultad, 'instrucciones':elem.instrucciones, 'multimedia': elem.multimedia};
+				recetas.push(insert);
+			}
+		}
+		console.log(recetas);
+
+		res.send(recetas);
+  	});	
+	
 });
 
 
