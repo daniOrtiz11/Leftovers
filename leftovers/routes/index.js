@@ -133,7 +133,7 @@ function filterIngrs(recetas) {
 router.get('/recipes', function(req, res, next){
 	//El ingrediente está en req.query.ing pero en minusculas entero.
 	//cadena.toUpperCase() para mayusculas, cadena.toLowerCase() para minusculas
-	filtrarPor = ['Huevo'];
+	filtrarPor = req.query.ing;
 	getAllIngredients(function(error, obtainedBd){
 		//console.log(obtainedBd);
 		recetas = [];
@@ -208,6 +208,14 @@ router.get('/recipes', function(req, res, next){
   	});
 });
 
+router.get('/recipesWithout', function(req, res, next){
+	//No se recibe nada.
+	recetas = [];
+
+	//Coger todas las recetas, junto con sus ingredientes
+	
+	res.send(recetas);
+});
 
 
 module.exports = router;

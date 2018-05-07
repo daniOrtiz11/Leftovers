@@ -31,6 +31,15 @@
 							<li class="active"><a href="index.html">Recetas</a></li>
 							<li><a href="generic.html">Filtros</a></li>
 						</ul>
+						<ul class="icons">							
+								<li><div class="input-group">
+									  <span class="input-group-btn">
+										<button  id="buttonCon" class="btn btn-secondary" type="button" value="1" onclick="addRow(0)" >Añadir</button>
+									  </span>
+									  <input id="textIngred"type="text" class="form-control" placeholder="Ingredientes...">
+									</div>
+								</li>
+						</ul>
 						<ul class="icons">
 							<li><a href="#" class="icon fa-camera" onclick="blockModal()"><span class="label">Camera</span></a></li>
 						</ul>
@@ -63,7 +72,7 @@
 											</div></center>
                                                 <label id="ingrSearch"></label>
                                                 <input type=button value="Hacer otra foto" onClick="changeButtons()">
-                                                <button id="add" value="Añadir" onClick="window.location.href='/principal'">Añadir</button>
+                                                <button id="add" value="Añadir" onClick="addRow(1)">Añadir</button>
                                             </div>
                                         </div>
                                     </div>
@@ -73,6 +82,17 @@
 						<!-- Featured Post -->
 							<article class="post featured">
 								<header class="major">
+									<div class="table-wrapper">
+										<table id="tableIngAdd">
+											<thead>
+												<tr>
+													<th>Ingredientes añadidos</th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+										</table>
+									</div>
 									<span ><label id="recIng"></label></span><br>
 									<hr>
 									<h2><a id="title0" value="" href="#">Nombre_Receta_principal</a></h2>
@@ -175,35 +195,39 @@
 			<script src="stylesheets/main/assets/js/main.js"></script>
 
 	<script>
+	var arrayIng = [];
+	var ingredCamera;
 	var url_string = $(location).attr('href');
 	var url = new URL(url_string);
 	var modo = url.searchParams.get("modo");
 	var ingrediente = url.searchParams.get("ing");
-	document.getElementById("recIng").innerHTML= "Recetas con: " + ingrediente;
+	//document.getElementById("recIng").innerHTML= "Recetas con: " + ingrediente;
+	document.getElementById("recIng").innerHTML= "Recetas";
+	var table = document.getElementById("tableIngAdd");
 	//console.log(ingrediente);
 	if(ingrediente != null){
-		$.get( "/recipes", {ing:ingrediente}, function(data){
-		// Recetas en data.recetasSoloEsosIngredientes /// data.recetasAlgunoMas
-			//alert(data.recetasSoloEsosIngredientes);
-			//alert(data.recetasAlgunoMas);
-			for(var i=0;i < data.recetasSoloEsosIngredientes.length;i++){
-				document.getElementById("rec"+i).value = data.recetasSoloEsosIngredientes[i];
-				document.getElementById("title"+i).innerHTML = data.recetasSoloEsosIngredientes[i].titulo;
-				document.getElementById("image"+i).src= data.recetasSoloEsosIngredientes[i].multimedia;
-			}
-			var j = data.recetasSoloEsosIngredientes.length;
-			for(var i=0;i < 7;i++){
-				document.getElementById("rec"+j).value = data.recetasAlgunoMas[i];
-				document.getElementById("title"+j).innerHTML = data.recetasAlgunoMas[i].titulo;
-				document.getElementById("image"+j).src= data.recetasAlgunoMas[i].multimedia;
-				j++;
-			}
-		});
+		arrayIng.push(ingrediente);
+		var row = table.insertRow(1);
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		cell1.innerHTML = ingrediente;
+		cell2.innerHTML = '<input type="button" value="eliminar" onclick="deleteRow(1)" />';
+		getRecetas(arrayIng);
+	} else {
+		getRecetasWithout();
 	}
 	if ('addEventListener' in window) {
 		window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
 		document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
 	}
+	
+	$("#textIngred").on("input", function() {
+		if($('#textIngred').val() == ''){
+			document.getElementById("buttonCon").disabled = true;
+		} else{
+			document.getElementById("buttonCon").disabled = false;
+		}
+	});
 
 		// Get the modal
 	var modal = document.getElementById('myModal');
@@ -268,20 +292,20 @@
 					$.get( "/ingr", {}, function(data){
 						//alert(JSON.stringify(data));
 						ingrBD = data;
-						//alert(obj);
+						//alert(data);
 					});
 					
 					$.get( "/image", {imagen:data_uri}, function(data){
 						//alert(JSON.stringify(data));
 						ingrVision = data;
-						//alert(obj);
+						//alert(ingrVision);
 						var i = 0;
 						var ok = false;
 						var ingrediente = "";
 						while (i < ingrVision.length && !ok) { 
 							var j = 0;
 							while(j < ingrBD.length && !ok){
-								if(ingrVision[i] == ingrBD[j].nombre){
+								if((ingrVision[i].toLowerCase()) == (ingrBD[j].nombre.toLowerCase())){
 									ok = true;
 									ingrediente = ingrVision[i];
 								}
@@ -292,6 +316,7 @@
 						document.getElementById('contenedor').style.display = "none";
 						if(ingrediente != ""){ 
 							document.getElementById('ingrSearch').innerHTML = 'Tu ingrediente es...' + ingrediente + '!';
+							ingredCamera = ingrediente;
 							document.getElementById("add").disabled = false;
 						}else{ 
 							document.getElementById('ingrSearch').innerHTML = 'No lo reconocemos..haz otra foto!';
@@ -303,10 +328,70 @@
 	
 	// Linkar cada receta con su página
 	
+	function getRecetas(arrayIngred){
+		
+		$.get( "/recipes", {ing:arrayIng}, function(data){
+		// Recetas en data.recetasSoloEsosIngredientes /// data.recetasAlgunoMas
+			//alert(data.recetasSoloEsosIngredientes);
+			//alert(data.recetasAlgunoMas);
+			for(var i=0;i < data.recetasSoloEsosIngredientes.length;i++){
+				document.getElementById("rec"+i).value = data.recetasSoloEsosIngredientes[i];
+				document.getElementById("title"+i).innerHTML = data.recetasSoloEsosIngredientes[i].titulo;
+				document.getElementById("image"+i).src= data.recetasSoloEsosIngredientes[i].multimedia;
+			}
+			var j = data.recetasSoloEsosIngredientes.length;
+			for(var i=0;i < 7;i++){
+				document.getElementById("rec"+j).value = data.recetasAlgunoMas[i];
+				document.getElementById("title"+j).innerHTML = data.recetasAlgunoMas[i].titulo;
+				document.getElementById("image"+j).src= data.recetasAlgunoMas[i].multimedia;
+				j++;
+			}
+		});
+	}
+	
+	function getRecetasWithout(){
+		$.get( "/recipesWithout", {}, function(data){
+				for(var i=0;i < data.length;i++){
+					document.getElementById("rec"+i).value = data[i];
+					document.getElementById("title"+i).innerHTML = data[i].titulo;
+					document.getElementById("image"+i).src= data[i].multimedia;
+				}
+			});
+	}
+	
 	function linkarReceta(numReceta){
 		//dicc.serializeArray();
 		var dic = JSON.stringify(document.getElementById("rec"+numReceta).value);
 		window.location = '/receta?recipe=' + dic;
+	}
+	
+	function addRow(mode){
+		var ingred;
+		if(mode == 0){
+			ingred = document.getElementById('textIngred').value;
+		}else {
+			ingred = ingredCamera;
+			modal.style.display = "none";
+		}
+		arrayIng.push(ingred);
+		var numRows = document.getElementById("tableIngAdd").getElementsByTagName("tr").length;
+		var row = table.insertRow(numRows);
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		cell1.innerHTML = ingred;
+		var str ='<input type="button" value="eliminar" onclick="deleteRow('+numRows+')" />'
+		cell2.innerHTML = str;
+		
+		getRecetas(arrayIng);
+	}
+	
+	function deleteRow(n){
+		table.deleteRow(n);
+		var numRows = document.getElementById("tableIngAdd").getElementsByTagName("tr").length;
+		//Eliminar del array y actualizar.
+		arrayIng.splice(n-1, 1);
+		if(numRows < 2) getRecetasWithout();
+		else getRecetas(arrayIng);
 	}
 	</script>
 	</body>
