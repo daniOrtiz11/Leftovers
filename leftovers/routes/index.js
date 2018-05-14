@@ -206,7 +206,7 @@ router.get('/recipes', function(req, res, next){
 			}
 		}
 		//console.log(recetasSoloEsosIngredientes);
-		//console.log(recetasAlgunoMas);
+		console.log(recetasAlgunoMas.id);
 
 	res.send({recetasSoloEsosIngredientes, recetasAlgunoMas});
   	});
@@ -242,8 +242,6 @@ router.get('/recipesWithout', function(req, res, next){
 				recetas.push(insert);
 			}
 		}
-		console.log(recetas);
-
 		res.send(recetas);
   	});	
 	

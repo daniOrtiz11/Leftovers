@@ -332,8 +332,8 @@
 		
 		$.get( "/recipes", {ing:arrayIng}, function(data){
 		// Recetas en data.recetasSoloEsosIngredientes /// data.recetasAlgunoMas
-			//alert(data.recetasSoloEsosIngredientes);
-			//alert(data.recetasAlgunoMas);
+			alert(data.recetasSoloEsosIngredientes);
+			alert(data.recetasAlgunoMas);
 			for(var i=0;i < data.recetasSoloEsosIngredientes.length;i++){
 				document.getElementById("rec"+i).value = data.recetasSoloEsosIngredientes[i];
 				document.getElementById("title"+i).innerHTML = data.recetasSoloEsosIngredientes[i].titulo;
