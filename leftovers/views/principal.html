@@ -98,7 +98,7 @@
 									</div>
 									<span ><label id="recIng"></label></span><br>
 									<hr>
-									<h2><a id="title0" value="" href="#" onclick="linkarReceta(0);return false;">Nombre_Receta_principal</a></h2>
+									<h2><a id="title0" value="" href="#" onclick="linkarReceta(0);return false;">No hay recetas con esos ingredientes</a></h2>
 								</header>
 								<a href="#" class="image main"><img id="image0" src="images/main/default.jpg" alt="" /></a>
 								<ul class="actions">
@@ -108,7 +108,7 @@
 
 						<!-- Posts -->
 							<section class="posts">
-								<article>
+								<article id="art1" name="art1" style=display:none>
 									<header>
 										<h2><a id="title1" value="" href="#" onclick="linkarReceta(1);return false;">Sed magna<br />
 										ipsum faucibus</a></h2>
@@ -118,7 +118,7 @@
 										<li><a id="rec1" value="" href="#" class="button" onclick="linkarReceta(1);return false;">Ver más</a></li>
 									</ul>
 								</article>
-								<article>
+								<article id="art2" name="art2" style=display:none>
 									<header>
 										<h2><a id="title2" href="#" onclick="linkarReceta(2);return false;">Primis eget<br />
 										imperdiet lorem</a></h2>
@@ -128,7 +128,7 @@
 										<li><a id="rec2" value="" href="#" class="button" onclick="linkarReceta(2);return false;">Ver más</a></li>
 									</ul>
 								</article>
-								<article>
+								<article id="art3" name="art3" style=display:none>
 									<header>
 										<h2><a id="title3" href="#" onclick="linkarReceta(3);return false;">Ante mattis<br />
 										interdum dolor</a></h2>
@@ -138,7 +138,7 @@
 										<li><a id="rec3" value="" href="#" class="button" onclick="linkarReceta(3);return false;">Ver más</a></li>
 									</ul>
 								</article>
-								<article>
+								<article id="art4" name="art4" style=display:none>
 									<header>
 										<h2><a id="title4" href="#" onclick="linkarReceta(4);return false;">Tempus sed<br />
 										nulla imperdiet</a></h2>
@@ -148,9 +148,9 @@
 										<li><a id="rec4" value="" href="#" class="button" onclick="linkarReceta(4);return false;">Ver más</a></li>
 									</ul>
 								</article>
-								<article>
+								<article id="art5" name="art5" style=display:none>
 									<header>
-										<h2><a id="title5" href="#" onclick="linkarReceta(5);return false;">Odio magna<br />
+										<h2><a id="title5" name="art5" href="#" onclick="linkarReceta(5);return false;">Odio magna<br />
 										sed consectetur</a></h2>
 									</header>
 									<a href="#" class="image fit"><img id="image5" src="images/main/default.jpg" alt="" /></a>
@@ -158,7 +158,7 @@
 										<li><a id="rec5" value="" href="#" class="button" onclick="linkarReceta(5);return false;">Ver más</a></li>
 									</ul>
 								</article>
-								<article>
+								<article id="art6" name="art6" style=display:none>
 									<header>
 										<h2><a id="title6" href="#" onclick="linkarReceta(6);return false;">Augue lorem<br />
 										primis vestibulum</a></h2>
@@ -332,34 +332,59 @@
 	// Linkar cada receta con su página
 	
 	function getRecetas(arrayIngred){
-		
+	
+		initRecetas();
 		$.get( "/recipes", {ing:arrayIng}, function(data){
 		// Recetas en data.recetasSoloEsosIngredientes /// data.recetasAlgunoMas
-			alert(data.recetasSoloEsosIngredientes);
-			alert(data.recetasAlgunoMas);
+			//alert(data.recetasSoloEsosIngredientes);
+			//alert(data.recetasAlgunoMas);
 			for(var i=0;i < data.recetasSoloEsosIngredientes.length;i++){
+				document.getElementById("rec0").style.display = "block";
 				document.getElementById("rec"+i).value = data.recetasSoloEsosIngredientes[i];
 				document.getElementById("title"+i).innerHTML = data.recetasSoloEsosIngredientes[i].titulo;
 				document.getElementById("image"+i).src= data.recetasSoloEsosIngredientes[i].multimedia;
+				if(i>0)
+					document.getElementsByName("art"+i).style.display = "block";
 			}
 			var j = data.recetasSoloEsosIngredientes.length;
-			for(var i=0;i < 7;i++){
+			var i = 0;
+			var k = 7-j;
+			var numReces = data.recetasAlgunoMas.length;
+			while((i < k) && numReces > 0){
+				document.getElementById("rec0").style.display = "block";
 				document.getElementById("rec"+j).value = data.recetasAlgunoMas[i];
 				document.getElementById("title"+j).innerHTML = data.recetasAlgunoMas[i].titulo;
 				document.getElementById("image"+j).src= data.recetasAlgunoMas[i].multimedia;
+				if(j>0)
+					document.getElementsByName("art"+j)[0].style.display = "block";
 				j++;
+				numReces--;
 			}
 		});
 	}
 	
 	function getRecetasWithout(){
+		initRecetas();
+		document.getElementById("rec0").style.display = "block";
 		$.get( "/recipesWithout", {}, function(data){
-				for(var i=0;i < data.length;i++){
+				for(var i=0;i < 7;i++){
+					document.getElementById("rec0").style.display = "block";
 					document.getElementById("rec"+i).value = data[i];
 					document.getElementById("title"+i).innerHTML = data[i].titulo;
 					document.getElementById("image"+i).src= data[i].multimedia;
+					if(i>0)
+						document.getElementsByName("art"+i)[0].style.display = "block";
 				}
 			});
+	}
+	
+	function initRecetas(){
+		document.getElementById("rec0").style.display = "none";
+		document.getElementById("title0").innerHTML = "No hay recetas con esos ingredientes";
+		document.getElementById("image0").src= "";
+		for(var i = 1; i < 7; i++){
+			document.getElementsByName("art"+i)[0].style.display = "none";
+		}
 	}
 	
 	function linkarReceta(numReceta){
