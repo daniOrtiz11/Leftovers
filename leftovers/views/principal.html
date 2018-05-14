@@ -4,6 +4,7 @@
 	<head>
 		<title>Leftovers | Principal</title>
 		<meta charset="utf-8" />
+        <link rel="stylesheet" href="stylesheets/style.css" />
 		<link rel="icon" href="images/avatarfavicon.png" type="image/gif">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="stylesheets/main/assets/css/main.css" />
@@ -12,6 +13,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script type="text/javascript" src="./webcam.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 	</head>
 	<body class="is-loading">
 
@@ -22,25 +24,26 @@
 
 				<!-- Header -->
 					<header id="header">
-						<p  class="logo">Leftovers</p>
+						<p  class="logo"> Leftovers</p>
 					</header>
 
 				<!-- Nav -->
 					<nav id="nav">
 						<ul class="links">
-							<li class="active"><a href="index.html">Recetas</a></li>
+							<li class="active"><a href="index.html"><span  class="fas fa-utensils"></span> Recetas</a></li>
 							<li><a href="generic.html">Filtros</a></li>
 						</ul>
 						<ul class="icons">							
 								<li><div class="input-group">
-									  <span class="input-group-btn">
-										<button  id="buttonCon" class="btn btn-secondary" type="button" value="1" onclick="addRow(0)" >Añadir</button>
+									  <span  class="input-group-btn">
+										<button  id="buttonCon" class="btn btn-secondary" type="button" value="1" onclick="addRow(0)" ><span  class="icon fa-plus"></span></button>
 									  </span>
-									  <input id="textIngred"type="text" class="form-control" placeholder="Ingredientes...">
+									  <input id="textIngred"type="text" class="form-control" placeholder="Ingredientes..." style="color: #212931">
 									</div>
 								</li>
 						</ul>
 						<ul class="icons">
+                            <li id="fakeicon" style="opacity: 0"><a class="icon fa-camera"><span class="label">Camera</span></a></li>
 							<li><a href="#" class="icon fa-camera" onclick="blockModal()"><span class="label">Camera</span></a></li>
 						</ul>
 					</nav>
@@ -86,7 +89,7 @@
 										<table id="tableIngAdd">
 											<thead>
 												<tr>
-													<th>Ingredientes añadidos</th>
+													<th><span  class="fas fa-lemon"></span> Ingredientes añadidos:</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -95,7 +98,7 @@
 									</div>
 									<span ><label id="recIng"></label></span><br>
 									<hr>
-									<h2><a id="title0" value="" href="#">Nombre_Receta_principal</a></h2>
+									<h2><a id="title0" value="" href="#" onclick="linkarReceta(0);return false;">Nombre_Receta_principal</a></h2>
 								</header>
 								<a href="#" class="image main"><img id="image0" src="images/main/default.jpg" alt="" /></a>
 								<ul class="actions">
@@ -107,7 +110,7 @@
 							<section class="posts">
 								<article>
 									<header>
-										<h2><a id="title1" value="" href="#">Sed magna<br />
+										<h2><a id="title1" value="" href="#" onclick="linkarReceta(1);return false;">Sed magna<br />
 										ipsum faucibus</a></h2>
 									</header>
 									<a href="#" class="image fit"><img id="image1" src="images/main/default.jpg" alt="" /></a>
@@ -117,7 +120,7 @@
 								</article>
 								<article>
 									<header>
-										<h2><a id="title2" href="#">Primis eget<br />
+										<h2><a id="title2" href="#" onclick="linkarReceta(2);return false;">Primis eget<br />
 										imperdiet lorem</a></h2>
 									</header>
 									<a href="#" class="image fit"><img id="image2" src="images/main/default.jpg" alt="" /></a>
@@ -127,7 +130,7 @@
 								</article>
 								<article>
 									<header>
-										<h2><a id="title3" href="#">Ante mattis<br />
+										<h2><a id="title3" href="#" onclick="linkarReceta(3);return false;">Ante mattis<br />
 										interdum dolor</a></h2>
 									</header>
 									<a href="#" class="image fit"><img id="image3" src="images/main/default.jpg" alt="" /></a>
@@ -137,7 +140,7 @@
 								</article>
 								<article>
 									<header>
-										<h2><a id="title4" href="#">Tempus sed<br />
+										<h2><a id="title4" href="#" onclick="linkarReceta(4);return false;">Tempus sed<br />
 										nulla imperdiet</a></h2>
 									</header>
 									<a href="#" class="image fit"><img id="image4" src="images/main/default.jpg" alt="" /></a>
@@ -147,7 +150,7 @@
 								</article>
 								<article>
 									<header>
-										<h2><a id="title5" href="#">Odio magna<br />
+										<h2><a id="title5" href="#" onclick="linkarReceta(5);return false;">Odio magna<br />
 										sed consectetur</a></h2>
 									</header>
 									<a href="#" class="image fit"><img id="image5" src="images/main/default.jpg" alt="" /></a>
@@ -157,7 +160,7 @@
 								</article>
 								<article>
 									<header>
-										<h2><a id="title6" href="#">Augue lorem<br />
+										<h2><a id="title6" href="#" onclick="linkarReceta(6);return false;">Augue lorem<br />
 										primis vestibulum</a></h2>
 									</header>
 									<a value="" href="#" class="image fit"><img id="image6" src="images/main/default.jpg" alt="" /></a>
@@ -202,7 +205,7 @@
 	var modo = url.searchParams.get("modo");
 	var ingrediente = url.searchParams.get("ing");
 	//document.getElementById("recIng").innerHTML= "Recetas con: " + ingrediente;
-	document.getElementById("recIng").innerHTML= "Recetas";
+	//document.getElementById("recIng").innerHTML= "Recetas:";
 	var table = document.getElementById("tableIngAdd");
 	//console.log(ingrediente);
 	if(ingrediente != null){

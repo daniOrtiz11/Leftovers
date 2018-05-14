@@ -8,6 +8,7 @@
         <link rel="icon" href="images/avatarfavicon.png" type="image/gif">
 		<link rel="stylesheet" href="stylesheets/main/assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="stylesheets/main/assets/css/noscript.css" /></noscript>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 	</head>
 	<body class="is-loading">
 
@@ -25,21 +26,22 @@
 						<!-- Post -->
 							<section class="post">
 								<header class="major">
-									<h1><label id="title">Título de la receta</label></h1>
+                                    <h1 id="title">Título de la receta</h1>
+									<!--<h1><label id="title">Título de la receta</label></h1>-->
 								</header>
 
 								<!-- Text stuff -->
-									<h2>Pinta</h2>
+									<h2><span class="icon fa-image"></span> Pinta que debería tener</h2>
                                     <a href="#" class="image main"><img id="image" src="images/main/default.jpg" alt="" /></a>
 									<hr />
-                                    <h2>Detalles</h2>
+                                    <h2><span class="icon fa-info-circle"></span> Detalles </h2>
                                     <ul>
                                         <li><label id="nPersonas">Nº de personas</label></li>
                                         <li><label id="duracion">Tiempo</label></li>
                                         <li><label id="dificultad">Dificultad</label></li>
                                     </ul>
                                     <hr />
-                                    <h2> Ingredientes</h2>
+                                    <h2><i class="icon fas fa-lemon"></i> Ingredientes</h2>
 									<div class="table-wrapper">
 										<table id="tableIng">
 											<thead>
@@ -52,8 +54,7 @@
 											</tbody>
 										</table>
 									</div>
-									<hr />
-                                    <h2>Instrucciones</h2>
+                                    <h2><span class="icon fa-list-ol"></span> Instrucciones</h2>
                                     <div class="box">
                                     <label id="instrucc">Lorem ipsum dolor sit amet nullam id egestas urna aliquam</label>
                                     </div>
@@ -91,7 +92,14 @@
 		cell1.innerHTML = ing.nombre;
 		cell2.innerHTML = ing.cantidad;
 	}
-	document.getElementById("instrucc").innerHTML= receta.instrucciones;
+    var instruc = receta.instrucciones.split(".");
+    var parseo = "";
+    var insLeng = instruc.length;
+    for(i = 0; i < insLeng-1; i++){
+        var n=i+1;
+        parseo = parseo +n+". " + instruc[i] + "<br>" + "<br>";
+    }
+	document.getElementById("instrucc").innerHTML= parseo;
 	</script>
 	</body>
 	
