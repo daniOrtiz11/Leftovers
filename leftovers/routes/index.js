@@ -47,6 +47,9 @@ router.get('/principal', function(req, res, next) {
 router.get('/receta', function(req, res, next) {
 	res.render('receta', { nombre: "" });
 });
+router.get('/principalFiltros', function(req, res, next) {
+	res.render('principalFiltros', { nombre: "" });
+});
 
 router.get('/image', function(req, res, next) {
 	ba64.writeImageSync("myimage", req.query.imagen);
@@ -245,6 +248,13 @@ router.get('/recipesWithout', function(req, res, next){
 		res.send(recetas);
   	});	
 	
+});
+
+router.get('/recipesWithFilters', function(req, res, next){
+	console.log(req.query.filtros);
+	filtros = req.query.filtros; //Están como: Duración,Tiempo,nPersonas, para obtener cada uno haces filtro.split(',')[0], igual con [1] e igual con [2]
+								 //El tiempo está en minutos y he visto que en la BD está en horas y minutos, quizá eso te de algun problema.
+	//Devolver las recetas como en los otros
 });
 
 

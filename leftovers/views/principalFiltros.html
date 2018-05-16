@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Leftovers | Principal</title>
+		<meta charset="utf-8" />
+        <link rel="stylesheet" href="stylesheets/style.css" />
+		<link rel="icon" href="images/avatarfavicon.png" type="image/gif">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="stylesheets/main/assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="stylesheets/main/assets/css/noscript.css" /></noscript>
+        <link rel="stylesheet" href="stylesheets/main/assets/css/modal.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+	</head>
+	<body class="is-loading">
+
+		<!-- Wrapper -->
+			<div id="wrapper" class="fade-in">
+
+				<!-- Intro -->
+
+				<!-- Header -->
+					<header id="header">
+						<p  class="logo"> Leftovers</p>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="principal"><span  class="fas fa-utensils"></span> Recetas</a></li>
+							<li class="active"><a>Filtros</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<section class="post">
+							<h2><span class="icon fa-wrench"></span> Dificultad </h2>
+								<select id="mySelect">
+								  <option value="Fácil">Fácil</option>
+								  <option value="Media">Media</option>
+								  <option value="Difícil">Difícil</option>
+								</select>
+							<h2><span class="icon fa-clock"></span> Tiempo de preparación en minutos </h2>
+								<datalist id="tickmarks">
+								  <option value="10" label="10">
+								  <option value="20" label="20">
+								  <option value="30" label="30">
+								  <option value="40" label="40">
+								  <option value="50" label="50">
+								  <option value="60" label="60">
+								  <option value="70" label="70">
+								  <option value="80" label="80">
+								  <option value="90" label="90">
+								</datalist>
+								<input id="myRange" type="range"list="tickmarks" value="10"></input>
+							<h2><span class="icon fa-user"></span> Número de comensales </h2>
+								<input id="myNumber" id="number" type="number" value="1" min="1"><br><br><br>
+								
+								<button id="buttonRec" class="btn btn-secondary" type="button" value="1" onclick="getRecFilt()"> Buscar recetas! </button>
+						</section>
+					</div>
+			
+		<!-- Scripts -->
+			<script src="stylesheets/main/assets/js/jquery.min.js"></script>
+			<script src="stylesheets/main/assets/js/jquery.scrollex.min.js"></script>
+			<script src="stylesheets/main/assets/js/jquery.scrolly.min.js"></script>
+			<script src="stylesheets/main/assets/js/skel.min.js"></script>
+			<script src="stylesheets/main/assets/js/util.js"></script>
+			<script src="stylesheets/main/assets/js/main.js"></script>
+
+	<script>
+	function getRecFilt(){
+		var args = [];
+		args[0] = $("#mySelect").val();
+		args[1] = document.getElementById("myRange").value;
+		args[2] = document.getElementById("myNumber").value;
+		window.location = '/principal?modo=' + 3 + '&filtros=' + args;
+	}
+	</script>
+	</body>
+		<!--
+	Based on the template of:
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+	-->
+</html>

@@ -31,7 +31,7 @@
 					<nav id="nav">
 						<ul class="links">
 							<li class="active"><a href="index.html"><span  class="fas fa-utensils"></span> Recetas</a></li>
-							<li><a href="generic.html">Filtros</a></li>
+							<li><a href="principalFiltros">Filtros</a></li>
 						</ul>
 						<ul class="icons">							
 								<li><div class="input-group">
@@ -82,14 +82,26 @@
                                     <div class="col-md-3"></div>
                                 </div>
 							</div>
+							
 						<!-- Featured Post -->
-							<article class="post featured">
+							<article class="post featured" >
 								<header class="major">
-									<div class="table-wrapper">
+									<div id="divTabIng" class="table-wrapper" style=display:none>
 										<table id="tableIngAdd">
 											<thead>
 												<tr>
 													<th><span  class="fas fa-lemon"></span> Ingredientes añadidos:</th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+										</table>
+									</div>
+									<div id="divTabFil" class="table-wrapper" style=display:none>
+										<table id="tableFiltros">
+											<thead>
+												<tr>
+													<th><span  class="fas fa-lemon"></span> Filtros escogidos:</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -203,11 +215,13 @@
 	var url_string = $(location).attr('href');
 	var url = new URL(url_string);
 	var modo = url.searchParams.get("modo");
+	var filtros = url.searchParams.get("filtros");
 	var ingrediente = url.searchParams.get("ing");
 	//document.getElementById("recIng").innerHTML= "Recetas con: " + ingrediente;
 	//document.getElementById("recIng").innerHTML= "Recetas:";
 	var table = document.getElementById("tableIngAdd");
 	document.getElementById("buttonCon").disabled = true;
+	document.getElementById('divTabIng').style.display = "block";
 	//console.log(ingrediente);
 	if(ingrediente != null){
 		arrayIng.push(ingrediente);
@@ -218,7 +232,29 @@
 		cell2.innerHTML = '<input type="button" value="eliminar" onclick="deleteRow(1)" />';
 		getRecetas(arrayIng);
 	} else {
-		getRecetasWithout();
+		if(modo==3){
+			document.getElementById('divTabIng').style.display = "none";
+			document.getElementById('divTabFil').style.display = "block";
+			var tableAux = document.getElementById("tableFiltros");
+			var row = tableAux.insertRow(1);
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			cell1.innerHTML = "Dificultad: ";
+			cell2.innerHTML = filtros.split(',')[0];
+			row = tableAux.insertRow(2);
+			cell1 = row.insertCell(0);
+			cell2 = row.insertCell(1);
+			cell1.innerHTML = "Tiempo de preparación: ";
+			cell2.innerHTML = filtros.split(',')[1];
+			row = tableAux.insertRow(3);
+			cell1 = row.insertCell(0);
+			cell2 = row.insertCell(1);
+			cell1.innerHTML = "Número de comensales: ";
+			cell2.innerHTML = filtros.split(',')[2];
+			getRecetasWithFilters(filtros);
+		} else{
+			getRecetasWithout();
+		}
 	}
 	if ('addEventListener' in window) {
 		window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
@@ -366,9 +402,25 @@
 	
 	function getRecetasWithout(){
 		initRecetas();
-		document.getElementById("rec0").style.display = "block";
 		$.get( "/recipesWithout", {}, function(data){
 				for(var i=0;i < 7;i++){
+					document.getElementById("rec0").style.display = "block";
+					document.getElementById("rec"+i).value = data[i];
+					document.getElementById("title"+i).innerHTML = data[i].titulo;
+					document.getElementById("image"+i).src= data[i].multimedia;
+					if(i>0)
+						document.getElementsByName("art"+i)[0].style.display = "block";
+				}
+			});
+	}
+	
+	function getRecetasWithFilters(filtros){
+		initRecetas();
+		$.get( "/recipesWithFilters", {filtros}, function(data){
+			var length = data.recetasFiltros.length;
+			if(length > 7) length = 7;
+				for(var i=0;i < length;i++){
+
 					document.getElementById("rec0").style.display = "block";
 					document.getElementById("rec"+i).value = data[i];
 					document.getElementById("title"+i).innerHTML = data[i].titulo;
@@ -395,6 +447,8 @@
 	}
 	
 	function addRow(mode){
+		document.getElementById('divTabIng').style.display = "block";
+		document.getElementById('divTabFil').style.display = "none";
 		var ingred;
 		if(mode == 0){
 			ingred = document.getElementById('textIngred').value;
