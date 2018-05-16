@@ -19,10 +19,24 @@
 					<header id="header">
 						<a href="/" class="logo">Leftovers</a>
 					</header>
-					<nav id="nav">
-							<span class="input-group-btn">
-									<button  id="buttonCon" class="btn btn-secondary" type="button" value="1" onclick="javascript:history.back(-1)" style="margin-left: 1030px">Volver</button>
-							</span>
+                    <nav id="nav">
+						<ul class="links">
+							<li><a style="display:none" href="index.html"><span  class="fas fa-utensils"></span> Recetas</a></li>
+							<li><a style="display:none" href="generic.html">Filtros</a></li>
+						</ul>
+						<ul class="icons">							
+								<li><div style="display:none" class="input-group">
+									  <span  class="input-group-btn">
+										<button  id="buttonCon" class="btn btn-secondary" type="button" value="1" ><span  class="icon fa-plus"></span></button>
+									  </span>
+									  <input id="textIngred"type="text" class="form-control" placeholder="Ingredientes..." style="color: #212931">
+									</div>
+								</li>
+						</ul>
+						<ul class="icons">
+                            <li id="fakeicon" style="opacity: 0"><a class="icon fa-camera"><span class="label">Camera</span></a></li>
+							<li><button  id="buttonVolver" class="btn btn-secondary" type="button" value="1" onclick="javascript:history.back(-1)">Volver</button></li>
+						</ul>
 					</nav>
 				<!-- Main -->
 					<div id="main">
@@ -40,7 +54,7 @@
 									<hr />
                                     <h2><span class="icon fa-info-circle"></span> Detalles </h2>
                                     <ul>
-                                        <li><label id="nPersonas">Nº de comensales</label></li>
+                                        <li><label id="nPersonas">Nº de personas</label></li>
                                         <li><label id="duracion">Tiempo</label></li>
                                         <li><label id="dificultad">Dificultad</label></li>
                                     </ul>
