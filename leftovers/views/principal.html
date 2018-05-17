@@ -395,6 +395,7 @@
 				if(j>0)
 					document.getElementsByName("art"+j)[0].style.display = "block";
 				j++;
+				i++;
 				numReces--;
 			}
 		});
@@ -416,15 +417,15 @@
 	
 	function getRecetasWithFilters(filtros){
 		initRecetas();
+		document.getElementById("title0").innerHTML = "No hay recetas con esos filtros";
 		$.get( "/recipesWithFilters", {filtros}, function(data){
-			var length = data.recetasFiltros.length;
+			var length = data.recetasCompletas.length;
 			if(length > 7) length = 7;
 				for(var i=0;i < length;i++){
-
 					document.getElementById("rec0").style.display = "block";
-					document.getElementById("rec"+i).value = data[i];
-					document.getElementById("title"+i).innerHTML = data[i].titulo;
-					document.getElementById("image"+i).src= data[i].multimedia;
+					document.getElementById("rec"+i).value = data.recetasCompletas[i];
+					document.getElementById("title"+i).innerHTML = data.recetasCompletas[i].titulo;
+					document.getElementById("image"+i).src= data.recetasCompletas[i].multimedia;
 					if(i>0)
 						document.getElementsByName("art"+i)[0].style.display = "block";
 				}
@@ -452,6 +453,7 @@
 		var ingred;
 		if(mode == 0){
 			ingred = document.getElementById('textIngred').value;
+			document.getElementById("textIngred").value = "";
 		}else {
 			ingred = ingredCamera;
 			modal.style.display = "none";
