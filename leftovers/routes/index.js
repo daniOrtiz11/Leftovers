@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var ingredientes = require('../models/ingredientes');
 var database = require('../models/database');
 var vision = require('@google-cloud/vision');
 var fs = require('fs');
@@ -254,40 +253,74 @@ router.get('/recipesWithFilters', function(req, res, next){
 	console.log(req.query.filtros);
 	filtros = req.query.filtros; //Están como: Duración,Tiempo,nPersonas, para obtener cada uno haces filtro.split(',')[0], igual con [1] e igual con [2]
 								 //El tiempo está en minutos y he visto que en la BD está en horas y minutos, quizá eso te de algun problema.
+	filtros_list = filtros.split(',');
+	console.log(filtros_list);
+	dificultad = filtros_list[0];
+	tiempo = filtros_list[1];
+	npersonas = filtros_list[2];
+	
+	getAllIngredients(function(error, obtainedBd){
+		recetas = [];
+
+		recetas = (obtainedBd.filter(ingr => aMinutos(ingr.tiempo) < tiempo));
+		recetas = (recetas.filter(ingr => ingr.dificultad == dificultad));
+		recetas = (recetas.filter(ingr => ingr.npersonas >= npersonas));
+		recetas = recetas.map(a => a.idreceta);
+		
+		indexRecetas = [];
+		for (var index = 0; index < recetas.length; index++){
+			if(indexRecetas.indexOf(recetas[index])<0){
+				indexRecetas.push(recetas[index]);
+			}			
+		}
+
+
+		ingredientesPorReceta = {};
+		for (var index = 0; index < obtainedBd.length; index++){
+			elem = obtainedBd[index];
+			if(ingredientesPorReceta.hasOwnProperty(String(elem.idreceta))){
+				ingredientes_receta = ingredientesPorReceta[String(elem.idreceta)];
+				ingrediente_cantidad = JSON.stringify({'nombre': elem.nombre, 'cantidad':elem.cantidad});
+				newstr = ingredientes_receta.concat([ingrediente_cantidad]);
+				ingredientesPorReceta[String(elem.idreceta)] = newstr;
+			}
+			else{
+				ingrediente_cantidad = JSON.stringify({'nombre': elem.nombre, 'cantidad':elem.cantidad});
+				ingredientesPorReceta[String(elem.idreceta)] = [ingrediente_cantidad];
+			}
+		}
+
+		recetasCompletas = [];
+
+		for (var index = 0; index < indexRecetas.length; index++){
+			for (var j = 0; j < obtainedBd.length; j++){
+				elem = obtainedBd[j];
+				if (elem.idreceta == indexRecetas[index]){
+					insert = {'id':elem.idreceta, 'ingredientes':ingredientesPorReceta[String(elem.idreceta)], 'titulo':elem.titulo, 'npersonas':elem.npersonas, 'tiempo':elem.tiempo, 'dificultad':elem.dificultad, 'instrucciones':elem.instrucciones, 'multimedia': elem.multimedia};
+					recetasCompletas.push(insert);
+					break;
+				}
+			}
+		}
+	console.log(recetasCompletas);
+	res.send({recetasCompletas});
+  	});
 	//Devolver las recetas como en los otros
 });
+
+function aMinutos(str){
+	str_splitted = str.split(' ');
+	if (str_splitted.length == 2){
+		return parseInt(str_splitted[0]);
+	}
+	else{
+		return parseInt(str_splitted[0])*60+parseInt(str_splitted[2]);
+	}
+}
 
 
 module.exports = router;
 
-//selecciona todos los ingredientes con un nombre
-
-/*database.connection.query('SELECT * FROM ingredientes WHERE nombre = ?', ['Sal'], function(err, result){
-	if(err)
-		console.log(err.code);
-	else
-		console.log(result);
-});*/
-
-//selecciona el id de las recetas que contienen un ingrediente
-/*
-database.connection.query('SELECT idreceta FROM ingredientes WHERE nombre = ?', ['Sal'], function(err, result){
-	if(err)
-		console.log(err.code);
-	else
-		console.log(result);
-});
-*/
-
-//selecciona el titulo de una receta a partir de su identificador
-/*
-database.connection.query('SELECT titulo FROM recetas WHERE id = ?', [2], function(err, result){
-	if(err)
-		console.log(err.code);
-	else
-		console.log(result);
-});
-*/
   	
 
 
