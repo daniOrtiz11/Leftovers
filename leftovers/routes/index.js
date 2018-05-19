@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var database = require('../models/database');
+var ingredientes = require('../models/ingredientes');
 var vision = require('@google-cloud/vision');
 var fs = require('fs');
 var ba64 = require("ba64");
