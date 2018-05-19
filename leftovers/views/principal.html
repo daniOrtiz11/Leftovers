@@ -12,6 +12,7 @@
         <link rel="stylesheet" href="stylesheets/main/assets/css/modal.css" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 		<script type="text/javascript" src="./webcam.min.js"></script>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 	</head>
@@ -38,6 +39,7 @@
 									  <span  class="input-group-btn">
 										<button  id="buttonCon" class="btn btn-secondary" type="button" value="1" onclick="addRow(0)" ><span  class="icon fa-plus"></span></button>
 									  </span>
+									  <label for="textIngred"></label>
 									  <input id="textIngred"type="text" class="form-control" placeholder="Ingredientes..." style="color: #212931">
 									</div>
 								</li>
@@ -208,8 +210,49 @@
 			<script src="stylesheets/main/assets/js/skel.min.js"></script>
 			<script src="stylesheets/main/assets/js/util.js"></script>
 			<script src="stylesheets/main/assets/js/main.js"></script>
+			<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+			<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+			<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 	<script>
+	//Autocomplete
+	var availableTags = [
+      "ActionScript",
+      "AppleScript",
+      "Asp",
+      "BASIC",
+      "C",
+      "C++",
+      "Clojure",
+      "COBOL",
+      "ColdFusion",
+      "Erlang",
+      "Fortran",
+      "Groovy",
+      "Haskell",
+      "Java",
+      "JavaScript",
+      "Lisp",
+      "Perl",
+      "PHP",
+      "Python",
+      "Ruby",
+      "Scala",
+      "Scheme"
+    ];
+    $( "#textIngred" ).autocomplete({
+      source: availableTags,
+	   change: function (event, ui) {
+                if(!ui.item){
+                    //http://api.jqueryui.com/autocomplete/#event-change -
+                    // The item selected from the menu, if any. Otherwise the property is null
+                    //so clear the item for force selection
+                    $('#textIngred').val('');
+					document.getElementById("buttonCon").disabled = true;
+                }
+		}
+    });
+	
 	var arrayIng = [];
 	var ingredCamera;
 	var url_string = $(location).attr('href');

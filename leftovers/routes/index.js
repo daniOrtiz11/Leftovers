@@ -81,6 +81,7 @@ router.get('/image', function(req, res, next) {
 router.get('/ingr', function(req, res, next) {
   ingredientes.getLista(function(error, data){
 		obj = data;
+		console.log(data);
   });
 
   /*
@@ -96,6 +97,12 @@ router.get('/ingr', function(req, res, next) {
   setTimeout(sendToFrontIngr, 2500,res);
 });
 
+router.get('/ingrInic', function(req, res, next) {
+  ingredientes.getLista(function(error, data){
+		obj = data;
+		console.log(data);
+  });
+});
 function sendToFront(res){
 	res.send(someIngredients);
 	someIngredients = [];
