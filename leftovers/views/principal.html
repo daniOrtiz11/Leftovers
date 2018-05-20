@@ -34,7 +34,7 @@
 							<li class="active"><a href="index.html"><span  class="fas fa-utensils"></span> Recetas</a></li>
 							<li><a href="principalFiltros">Filtros</a></li>
 						</ul>
-						<ul class="icons">							
+						<ul class="icons">
 								<li><div class="input-group">
 									  <span  class="input-group-btn">
 										<button  id="buttonCon" class="btn btn-secondary" type="button" value="1" onclick="addRow(0)" ><span  class="icon fa-plus"></span></button>
@@ -84,7 +84,7 @@
                                     <div class="col-md-3"></div>
                                 </div>
 							</div>
-							
+
 						<!-- Featured Post -->
 							<article class="post featured" >
 								<header class="major">
@@ -237,9 +237,9 @@
 								}
 							});
 	});
-	
 
-	
+
+
 	var arrayIng = [];
 	var ingredCamera;
 	var url_string = $(location).attr('href');
@@ -290,7 +290,7 @@
 		window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
 		document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
 	}
-	
+
 	$("#textIngred").on("input", function() {
 		if($('#textIngred').val() == ''){
 			document.getElementById("buttonCon").disabled = true;
@@ -305,7 +305,7 @@
 	// Get the <span> element that closes the modal
 	var span = document.getElementsByClassName("close")[0];
 	document.getElementById("add").disabled = true;
-	// When the user clicks on the button, open the modal 
+	// When the user clicks on the button, open the modal
 	function blockModal() {
 		modal.style.display = "block";
 		Webcam.set({
@@ -316,7 +316,7 @@
 		});
 		Webcam.attach( '#my_camera' );
 	}
-	
+
 	function changeButtons(){
 		document.getElementById('answer').style.display = "none";
 		document.getElementById('photo').style.display = "block";
@@ -336,16 +336,16 @@
 			modal.style.display = "none";
 		}
 	}
-	
+
 	function take_snapshot() {
-	
+
 	var ingrVision;
 	var ingrBD;
 				// take snapshot and get image data
 				Webcam.snap( function(data_uri) {
 					// display results in page
-					/*document.getElementById('results').innerHTML = 
-						'<h2>Here is your image:</h2>' + 
+					/*document.getElementById('results').innerHTML =
+						'<h2>Here is your image:</h2>' +
 						'<img src="'+data_uri+'"/>';*/
 				Webcam.set({
 				width: 440,
@@ -358,13 +358,13 @@
 					document.getElementById('answer').style.display = "block";
 					document.getElementById('photo').style.display = "none";
 					//data = data_uri;
-					
+
 					$.get( "/ingr", {}, function(data){
 						//alert(JSON.stringify(data));
 						ingrBD = data;
 						//alert(data);
 					});
-					
+
 					$.get( "/image", {imagen:data_uri}, function(data){
 						//alert(JSON.stringify(data));
 						ingrVision = data;
@@ -372,7 +372,7 @@
 						var i = 0;
 						var ok = false;
 						var ingrediente = "";
-						while (i < ingrVision.length && !ok) { 
+						while (i < ingrVision.length && !ok) {
 							var j = 0;
 							while(j < ingrBD.length && !ok){
 								if((ingrVision[i].toLowerCase()) == (ingrBD[j].nombre.toLowerCase())){
@@ -384,27 +384,28 @@
 							i++;
 						}
 						document.getElementById('contenedor').style.display = "none";
-						if(ingrediente != ""){ 
+						if(ingrediente != ""){
 							document.getElementById('ingrSearch').innerHTML = 'Tu ingrediente es...' + ingrediente + '!';
 							ingredCamera = ingrediente;
 							document.getElementById("add").disabled = false;
-						}else{ 
+						}else{
 							document.getElementById('ingrSearch').innerHTML = 'No lo reconocemos..haz otra foto!';
 						}
 					});
 					//Comparación con objeto de ingredientes
 	})
 	}
-	
+
 	// Linkar cada receta con su página
-	
+
 	function getRecetas(arrayIngred){
-	
+
 		initRecetas();
 		$.get( "/recipes", {ing:arrayIng}, function(data){
 		// Recetas en data.recetasSoloEsosIngredientes /// data.recetasAlgunoMas
 			//alert(data.recetasSoloEsosIngredientes);
 			//alert(data.recetasAlgunoMas);
+			console.log(data);
 			for(var i=0;i < data.recetasSoloEsosIngredientes.length;i++){
 				document.getElementById("rec0").style.display = "block";
 				document.getElementById("rec"+i).value = data.recetasSoloEsosIngredientes[i];
@@ -430,7 +431,7 @@
 			}
 		});
 	}
-	
+
 	function getRecetasWithout(){
 		initRecetas();
 		$.get( "/recipesWithout", {}, function(data){
@@ -444,7 +445,7 @@
 				}
 			});
 	}
-	
+
 	function getRecetasWithFilters(filtros){
 		initRecetas();
 		document.getElementById("title0").innerHTML = "No hay recetas con esos filtros";
@@ -461,7 +462,7 @@
 				}
 			});
 	}
-	
+
 	function initRecetas(){
 		document.getElementById("rec0").style.display = "none";
 		document.getElementById("title0").innerHTML = "No hay recetas con esos ingredientes";
@@ -470,13 +471,14 @@
 			document.getElementsByName("art"+i)[0].style.display = "none";
 		}
 	}
-	
+
 	function linkarReceta(numReceta){
 		//dicc.serializeArray();
 		var dic = JSON.stringify(document.getElementById("rec"+numReceta).value);
-		window.location = '/receta?recipe=' + dic;
+		var idreceta = document.getElementById("rec"+numReceta).value.id;
+		window.location = '/receta?recipe=' + idreceta;
 	}
-	
+
 	function addRow(mode){
 		document.getElementById('divTabIng').style.display = "block";
 		document.getElementById('divTabFil').style.display = "none";
@@ -496,10 +498,10 @@
 		cell1.innerHTML = ingred;
 		var str ='<input type="button" value="eliminar" onclick="deleteRow('+numRows+')" />'
 		cell2.innerHTML = str;
-		
+
 		getRecetas(arrayIng);
 	}
-	
+
 	function deleteRow(n){
 		table.deleteRow(n);
 		var numRows = document.getElementById("tableIngAdd").getElementsByTagName("tr").length;

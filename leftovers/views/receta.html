@@ -91,33 +91,41 @@
 			<script src="stylesheets/main/assets/js/main.js"></script>
 
 	<script>
-	var url_string = $(location).attr('href');
+		var url_string = $(location).attr('href');
 	var url = new URL(url_string);
-	var recipe = url.searchParams.get("recipe");
-	var receta = JSON.parse(recipe);
+	var id_recipe = url.searchParams.get("recipe");
+	console.log(id_recipe);
+	getReceta(id_recipe);
+	//var receta = JSON.parse(recipe);
+	function getReceta(id_recipe){
+		$.get( "/receta/:recipe", {id: id_recipe}, function(data){
+				var receta = data;
+				document.getElementById("title").innerHTML= receta.titulo;
+				document.getElementById("image").src= receta.multimedia;
+				document.getElementById("nPersonas").innerHTML= "Número de comensales: " + receta.npersonas;
+				document.getElementById("duracion").innerHTML= "Tiempo de preparación: " + receta.tiempo + "inutos";
+				document.getElementById("dificultad").innerHTML= "Dificultad: "+ receta.dificultad;
+				var table = document.getElementById("tableIng");
+				for(var i = 0; i<receta.ingredientes.length;i++){
+					var ing = JSON.parse(receta.ingredientes[i]);
+					var row = table.insertRow(i+1);
+					var cell1 = row.insertCell(0);
+					var cell2 = row.insertCell(1);
+					cell1.innerHTML = ing.nombre;
+					cell2.innerHTML = ing.cantidad;
+				}
+				    var instruc = receta.instrucciones.split(".");
+				    var parseo = "";
+				    var insLeng = instruc.length;
+				    for(i = 0; i < insLeng-1; i++){
+					var n=i+1;
+					parseo = parseo +n+". " + instruc[i] + "<br>" + "<br>";
+				    }
+				document.getElementById("instrucc").innerHTML= parseo;
+			});
 
-	document.getElementById("title").innerHTML= receta.titulo;
-	document.getElementById("image").src= receta.multimedia;
-	document.getElementById("nPersonas").innerHTML= "Número de comensales: " + receta.npersonas;
-	document.getElementById("duracion").innerHTML= "Tiempo de preparación: " + receta.tiempo + "inutos";
-	document.getElementById("dificultad").innerHTML= "Dificultad: "+ receta.dificultad;
-	var table = document.getElementById("tableIng");
-	for(var i = 0; i<receta.ingredientes.length;i++){
-		var ing = JSON.parse(receta.ingredientes[i]);
-		var row = table.insertRow(i+1);
-		var cell1 = row.insertCell(0);
-		var cell2 = row.insertCell(1);
-		cell1.innerHTML = ing.nombre;
-		cell2.innerHTML = ing.cantidad;
-	}
-    var instruc = receta.instrucciones.split(".");
-    var parseo = "";
-    var insLeng = instruc.length;
-    for(i = 0; i < insLeng-1; i++){
-        var n=i+1;
-        parseo = parseo +n+". " + instruc[i] + "<br>" + "<br>";
-    }
-	document.getElementById("instrucc").innerHTML= parseo;
+		}
+
 	</script>
 	</body>
 	

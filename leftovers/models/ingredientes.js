@@ -30,10 +30,12 @@ ingredientes.getLista = function(callback){
 	else{
 		console.log('Se han obtenido los ingredientes');
 		resultados = [];
+		introducidos = []
 		for (var index = 0; index < results.length; index++){
 			elem = results[index];
-			if(resultados.indexOf(elem) < 0){
-				resultados.push(elem);			
+			if(introducidos.indexOf(elem.nombre) < 0){
+				resultados.push(elem);	
+				introducidos.push(elem.nombre);		
 			}
 		}
 		callback(null, resultados);

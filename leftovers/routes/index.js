@@ -44,6 +44,42 @@ router.get('/principal/:modo?', function(req, res, next) {
 router.get('/principal', function(req, res, next) {
 	res.render('principal', { opcion: 2 });
 });
+
+//obtener recetas - ingredientes: uso --> filtrarPor = ['Sal', 'Huevo']; getRecipes(filtrarPor);
+function getAllIngredients(callback){
+	var sql = 'SELECT I.nombre, I.idreceta, I.cantidad, R.titulo, R.npersonas, R.tiempo, R.dificultad, R.instrucciones, R.multimedia FROM ingredientes I, recetas R where I.idreceta = R.id';
+	database.connection.query(sql, function(error, result)
+	{
+	if(error)
+		throw error;
+	else{
+		callback(null, result);
+	}
+	});
+}
+
+router.get('/receta/:recipe', function(req, res, next) {
+
+	id_receta = req.query.id;
+	getAllIngredients(function(error, obtainedBd){
+		ingredientes = (obtainedBd.filter(ingr => ingr.idreceta == id_receta));
+		ingredientes_receta = [];
+		una_receta = {};
+		for (var index = 0; index < ingredientes.length; index++){
+			elem = ingredientes[index];
+			if(index == 0){
+				una_receta = {'id':elem.idreceta, 'titulo':elem.titulo, 'npersonas':elem.npersonas, 'tiempo':elem.tiempo, 'dificultad':elem.dificultad, 'instrucciones':elem.instrucciones, 'multimedia': elem.multimedia};
+			}
+			ingrediente_cantidad = JSON.stringify({'nombre': elem.nombre, 'cantidad':elem.cantidad});
+			ingredientes_receta = ingredientes_receta.concat([ingrediente_cantidad]);
+			if(index == ingredientes.length-1){
+				una_receta['ingredientes'] = ingredientes_receta;
+			}
+		}
+		res.send(una_receta);
+	});
+});
+
 router.get('/receta', function(req, res, next) {
 	res.render('receta', { nombre: "" });
 });
@@ -115,20 +151,6 @@ function sendToFrontIngr(res){
 }
 
 
-//obtener recetas - ingredientes: uso --> filtrarPor = ['Sal', 'Huevo']; getRecipes(filtrarPor);
-function getAllIngredients(callback){
-	var sql = 'SELECT I.nombre, I.idreceta, I.cantidad, R.titulo, R.npersonas, R.tiempo, R.dificultad, R.instrucciones, R.multimedia FROM ingredientes I, recetas R where I.idreceta = R.id';
-	database.connection.query(sql, function(error, result)
-	{
-	if(error)
-		throw error;
-	else{
-		callback(null, result);
-	}
-	});
-}
-
-
 function filterIngrs(recetas) {
     return function(element) {
         for (var index = 0; index < recetas.length; index++) {  
@@ -144,22 +166,23 @@ router.get('/recipes', function(req, res, next){
 	//El ingrediente está en req.query.ing pero en minusculas entero.
 	filtrarPor = req.query.ing;
 	getAllIngredients(function(error, obtainedBd){
-		//console.log(obtainedBd);
 		//se incorpora un elemento con el nombre del ingrediente en minusculas para filtrar con el array, solo se usa en esta funcion
 		for (var index = 0; index < obtainedBd.length; index++){
 			elem = obtainedBd[index];
 			elem['nombremin'] = elem.nombre.toLowerCase();
 			obtainedBd[index] = elem;
 		}
+		
 		recetas = [];
 		for (var index = 0; index < filtrarPor.length; index++){
 			//se obtienen las recetas que tienen ese ingrediente
-			recetas = (obtainedBd.filter(ingr => ingr.nombremin == filtrarPor[index])).map(a => a.idreceta);
+			recetas = (obtainedBd.filter(ingr => ingr.nombremin == filtrarPor[index].toLowerCase())).map(a => a.idreceta);
 			console.log(recetas);
 			//se actualiza la lista de ingredientes para que solo contenga las apariciones de ingredientes de esas recetas			
 			obtainedBd = obtainedBd.filter(filterIngrs(recetas));
 			//console.log(obtainedBd);
 		}
+		console.log(recetas);
 		
 		indexRecetasAlgunoMas = [];
 		recetasAlgunoMas = [];
@@ -216,7 +239,7 @@ router.get('/recipes', function(req, res, next){
 			}
 		}
 		//console.log(recetasSoloEsosIngredientes);
-		console.log(recetasAlgunoMas.id);
+		//console.log(recetasAlgunoMas.id);
 
 	res.send({recetasSoloEsosIngredientes, recetasAlgunoMas});
   	});
