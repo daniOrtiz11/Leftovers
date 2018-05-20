@@ -58,7 +58,7 @@ router.get('/image', function(req, res, next) {
 	
 	// Performs label detection on the image file - req.query.imagen contains image
 		client
-		.labelDetection('./naranja.png')
+		.labelDetection('./myimage.jpeg')
 		.then(results => {
 		const labels = results[0].labelAnnotations;
 
