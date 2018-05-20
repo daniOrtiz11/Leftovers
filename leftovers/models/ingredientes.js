@@ -29,7 +29,14 @@ ingredientes.getLista = function(callback){
 	}	
 	else{
 		console.log('Se han obtenido los ingredientes');
-		callback(null, results);
+		resultados = [];
+		for (var index = 0; index < results.length; index++){
+			elem = results[index];
+			if(resultados.indexOf(elem) < 0){
+				indexRecetasAlgunoMas.push(elem);			
+			}
+		}
+		callback(null, resultados);
 	}
 });
 }
