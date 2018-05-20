@@ -359,12 +359,6 @@
 					document.getElementById('photo').style.display = "none";
 					//data = data_uri;
 
-					$.get( "/ingr", {}, function(data){
-						//alert(JSON.stringify(data));
-						ingrBD = data;
-						//alert(data);
-					});
-
 					$.get( "/image", {imagen:data_uri}, function(data){
 						//alert(JSON.stringify(data));
 						ingrVision = data;
@@ -374,8 +368,8 @@
 						var ingrediente = "";
 						while (i < ingrVision.length && !ok) {
 							var j = 0;
-							while(j < ingrBD.length && !ok){
-								if((ingrVision[i].toLowerCase()) == (ingrBD[j].nombre.toLowerCase())){
+							while(j < arrayIngredientes.length && !ok){
+								if((ingrVision[i].toLowerCase()) == (arrayIngredientes[j].toLowerCase())){
 									ok = true;
 									ingrediente = ingrVision[i];
 								}
