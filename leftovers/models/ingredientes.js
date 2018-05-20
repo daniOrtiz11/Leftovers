@@ -33,7 +33,7 @@ ingredientes.getLista = function(callback){
 		for (var index = 0; index < results.length; index++){
 			elem = results[index];
 			if(resultados.indexOf(elem) < 0){
-				indexRecetasAlgunoMas.push(elem);			
+				resultados.push(elem);			
 			}
 		}
 		callback(null, resultados);
