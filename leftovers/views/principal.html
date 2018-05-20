@@ -216,42 +216,29 @@
 
 	<script>
 	//Autocomplete
-	var availableTags = [
-      "ActionScript",
-      "AppleScript",
-      "Asp",
-      "BASIC",
-      "C",
-      "C++",
-      "Clojure",
-      "COBOL",
-      "ColdFusion",
-      "Erlang",
-      "Fortran",
-      "Groovy",
-      "Haskell",
-      "Java",
-      "JavaScript",
-      "Lisp",
-      "Perl",
-      "PHP",
-      "Python",
-      "Ruby",
-      "Scala",
-      "Scheme"
-    ];
-    $( "#textIngred" ).autocomplete({
-      source: availableTags,
-	   change: function (event, ui) {
-                if(!ui.item){
-                    //http://api.jqueryui.com/autocomplete/#event-change -
-                    // The item selected from the menu, if any. Otherwise the property is null
-                    //so clear the item for force selection
-                    $('#textIngred').val('');
-					document.getElementById("buttonCon").disabled = true;
-                }
-		}
-    });
+	var arrayIngredientes = [];
+	$.get( "/ingr", {}, function(data){
+						//alert(JSON.stringify(data));
+						//ingrBD = data;
+						//alert(data);
+						for(var i = 0; i < data.length; i++){
+							arrayIngredientes[i]=data[i].nombre;
+						}
+						    $( "#textIngred" ).autocomplete({
+							  source: arrayIngredientes,
+							   change: function (event, ui) {
+										if(!ui.item){
+											//http://api.jqueryui.com/autocomplete/#event-change -
+											// The item selected from the menu, if any. Otherwise the property is null
+											//so clear the item for force selection
+											$('#textIngred').val('');
+											document.getElementById("buttonCon").disabled = true;
+										}
+								}
+							});
+	});
+	
+
 	
 	var arrayIng = [];
 	var ingredCamera;
