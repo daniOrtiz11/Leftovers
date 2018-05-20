@@ -38,30 +38,50 @@
 					<div id="main">
 						<section class="post">
 							<h2><span class="icon fa-wrench"></span> Dificultad </h2>
-								<select id="mySelect">
+								<select id="mySelect" class="form-control">
 								  <option value="Fácil">Fácil</option>
 								  <option value="Media">Media</option>
 								  <option value="Difícil">Difícil</option>
 								</select>
+                             <br><br><br>
 							<h2><span class="icon fa-clock"></span> Tiempo de preparación en minutos </h2>
+                            <div class = "row">
+                                <div class = "col-md-12">
+                                <div class="slidecontainer">
+                                    <input type="range" min="1" max="100"  class="slider" list="tickmarks" id="myRange">
+                                </div>
+                                </div>
+                            </div>
+                            <br>
+                            <h4 id="valueTime" value="Valor"> </h4>
 								<datalist id="tickmarks">
-								  <option value="10" label="10">
-								  <option value="20" label="20">
-								  <option value="30" label="30">
-								  <option value="40" label="40">
-								  <option value="50" label="50">
-								  <option value="60" label="60">
-								  <option value="70" label="70">
-								  <option value="80" label="80">
-								  <option value="90" label="90">
+                                    <option value="10" label="10"> 10 </option>
+                                    <option value="20" label="20"> 20 </option>
+                                    <option value="30" label="30"> 30 </option>
+                                    <option value="40" label="40"> 40 </option>
+                                    <option value="50" label="50"> 50 </option>
+                                    <option value="60" label="60"> 60 </option>
+                                    <option value="70" label="70"> 70 </option>
+                                    <option value="80" label="80"> 80 </option>
+                                    <option value="90" label="90"> 90 </option>
 								</datalist>
-								<input id="myRange" type="range"list="tickmarks" value="10"></input>
+                            <br><br><br>
 							<h2><span class="icon fa-user"></span> Número de comensales </h2>
-								<input id="myNumber" id="number" type="number" value="1" min="1"><br><br><br>
+								<input class="form-control" id="myNumber" id="number" type="number" value="1" min="1"><br><br><br>
 								
+                            <div class="row">
+                                <div class ="col-md-4">
+                                </div>
+                                <div class ="col-md-5">
+                                </div>
+                                <div class ="col-md-3">
 								<button id="buttonRec" class="btn btn-secondary" type="button" value="1" onclick="getRecFilt()"> Buscar recetas! </button>
+                                </div>
+                            </div>
+
 						</section>
 					</div>
+        </div>
 			
 		<!-- Scripts -->
 			<script src="stylesheets/main/assets/js/jquery.min.js"></script>
@@ -72,7 +92,17 @@
 			<script src="stylesheets/main/assets/js/main.js"></script>
 
 	<script>
+        $( "#myRange" ).click(function() {
+            var newv = document.getElementById("myRange").value;
+            $("#valueTime").html("Minutos: " + newv);
+        });
+        $( "#myRange" ).mousedown(function() {
+            var newv = document.getElementById("myRange").value;
+            $("#valueTime").html("Minutos: " + newv);
+        });
+
 	function getRecFilt(){
+        
 		var args = [];
 		args[0] = $("#mySelect").val();
 		args[1] = document.getElementById("myRange").value;
